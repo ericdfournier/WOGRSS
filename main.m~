@@ -19,8 +19,7 @@ overlayShapeStruct = shaperead(overlayShapePath,'UseGeoCoords',true);
 gridDensity = 1116.99;
 [gridMask, geoRasterRef] = hucCode2GridMaskFnc(hucCodeShapeStruct,...
     hucIndex,gridDensity);
-geoshow(gridMask,gridMaskRef);
 
-%% 
+%% Plot Grid Mask
 
-geoshow(hucCodeShapeStruct(hucIndex,1));
+sourceIndex = getSourceIndexFnc(gridMask,geoRasterRef);

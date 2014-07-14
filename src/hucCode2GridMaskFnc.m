@@ -21,7 +21,7 @@ function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
 %                                                   hucIndex, ...
 %                                                   gridDensity);
 %
-% INPUTS (REQUIRED): 
+% INPUTS: 
 %
 %   hucCodeShapeStruct = {g x 1} shapefile structure dataset in which each 
 %                       polygon corresponds to a delineated HUC basin

@@ -1,5 +1,4 @@
 function [ sourceIndex ] = getSourceIndexFnc(   gridMask, ...
-                                                overlayShapeStruct, ...
                                                 geoRasterRef )
 % getSourceIndex.m Function which prompts the user to manually select the
 % location of the source index which will be used to initiate the MOGADOR
@@ -16,26 +15,15 @@ function [ sourceIndex ] = getSourceIndexFnc(   gridMask, ...
 %
 % SYNTAX:
 %
-%   [ sourceIndex ] =  hucCode2GridMaskFnc( gridMask, 
+%   [ sourceIndex ] =  hucCode2GridMaskFnc( gridMask, ...
+%                                           geoRasterRef);
 %
-% INPUTS (REQUIRED): 
+% INPUTS: 
 %
-%   hucCodeShapeStruct = {g x 1} shapefile structure dataset in which each 
-%                       polygon corresponds to a delineated HUC basin
-%
-%   hucIndex =          [s] scalar vector index referencing the
-%                       hucCodeShapeStruct element corresponding to the 
-%                       basin that has been selected by the user for the 
-%                       production of the gridMask
-%
-%   gridDensity =       [p] scalar value indicating the desired number of 
-%                       grid cells per unit of latitude and longitude 
-%                       (a value of 10 indicates 10 cells per degree, for 
-%                       example)
 %
 % OUTPUTS:
 %
-%   gridMask =          [j x k] binary array with valid pathway grid cells 
+%   gridMask =          [n x m] binary array with valid pathway grid cells 
 %                       labeled as ones and invalid pathway grid cells 
 %                       labeled as zero placeholders
 %
@@ -66,17 +54,39 @@ addRequired(P,'nargin',@(x)...
 addRequired(P,'nargout',@(x)...
     x == 1);
 addRequired(P,'gridMask',@(x)...
-    isstruct(x) &&...
+    ismatrix(x) &&...
     ~isempty(x));
 addRequired(P,'geoRasterRef',@(x)...
-    isstruct(
-addRequired(P,'gridDensity',@(x)...
-    isscalar(x) &&...
-    x > 0 && ...
-    ~isempty(x));
+    isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,hucCodeShapeStruct,hucIndex,gridDensity);
+parse(P,nargin,nargout,gridMask,geoRasterRef);
 
+%% Function Parameters
+
+gS = size(gridMask);
+
+%% Generate Interactive Map Plot
+
+scrn = get(0,'ScreenSize');
+fig1 = figure();
+set(fig1,'Position',scrn);
+
+axesm(  'MapProjection','mercator',...
+        'Grid','On',...
+        'MapLatLimit',geoRasterRef.Latlim,...
+        'MapLonLimit',geoRasterRef.Lonlim,...
+        'FLatLimit',geoRasterRef.Latlim,...
+        'FLonLimit',geoRasterRef.Lonlim);
+geoshow(gridMask, geoRasterRef);
+[sourceLat, sourceLon] = inputm(1);
+close(fig1);
+
+%% Generate Index Value Grid Mask
+
+indices = 1:1:(gS(1,1)*gS(1,2));
+indexMask = reshape(indices,gS);
+indexVal = ltln2val(indexMask,geoRasterRef,sourceLat,sourceLon);
+[rowInd, colInd] = find(indexMask == indexVal);
+sourceIndex = [rowInd colInd];
 
 end
-
