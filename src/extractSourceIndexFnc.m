@@ -1,32 +1,38 @@
-function [ sourceIndex ] = getSourceIndexFnc(   gridMask, ...
-                                                geoRasterRef )
-% getSourceIndexFnc.m Function which prompts the user to manually select the
+function [ sourceIndex ] = extractSourceIndexFnc(   sourceShapeStruct, ...
+                                                    geoRasterRef )
+% extractSourceIndexFnc.m Function which automatically extracts the
 % location of the source index which will be used to initiate the MOGADOR
-% corridor location procedure
+% corridor location procedure from a user specified overlay shape structure
+% spatial dataset
 %
 % DESCRIPTION:
 %
-%   Function which provides the user with a map of the gridMask region and
-%   prompts the user to manually click on the map to generate the row
-%   column indices of the source location to be used in a following
-%   corridor location procedure. 
+%   Function which takes as an input a grid mask layer, the grid mask's
+%   spatial reference information, and an source shapefile structure
+%   dataset and returns the source index with reference to the input
+%   grid mask layer. 
 % 
 %   Warning: minimal error checking is performed.
 %
 % SYNTAX:
 %
-%   [ sourceIndex ] =  getSourceIndexFnc( geoRasterRef);
+%   [ sourceIndex ] =  extractSourceIndexFnc(   sourceShapeStruct, ...
+%                                               geoRasterRef ); 
 %
 % INPUTS: 
 %
-%   geoRa
 %
 % OUTPUTS:
 %
+%   sourceShapeStruct = sourceShapeStruct = {1 x 1} shapefile structure 
+%                       dataset in the single point element corresponds to
+%                       the location of the desired source location for
+%                       which a source index is to be extracted
 %
 %   geoRasterRef =      {q} cell orientated geo raster reference object
 %                       providing spatial reference information for the
 %                       input gridMask data layer
+%
 %
 % EXAMPLES:
 %   
@@ -50,33 +56,23 @@ addRequired(P,'nargin',@(x)...
     x == 2);
 addRequired(P,'nargout',@(x)...
     x == 1);
-addRequired(P,'gridMask',@(x)...
-    ismatrix(x) &&...
+addRequired(P,'sourceShapeStruct',@(x)...
+    isstruct(x) &&...
+    size(x,1) == 1 &&...
     ~isempty(x));
 addRequired(P,'geoRasterRef',@(x)...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,gridMask,geoRasterRef);
+parse(P,nargin,nargout,sourceShapeStruct,geoRasterRef);
 
 %% Function Parameters
 
 gS = geoRasterRef.RasterSize;
 
-%% Generate Interactive Map Plot
+%% Extract Source Coordinates From Shapefile Structure Dataset 
 
-scrn = get(0,'ScreenSize');
-fig1 = figure();
-set(fig1,'Position',scrn);
-
-axesm(  'MapProjection','mercator',...
-        'Grid','On',...
-        'MapLatLimit',geoRasterRef.Latlim,...
-        'MapLonLimit',geoRasterRef.Lonlim,...
-        'FLatLimit',geoRasterRef.Latlim,...
-        'FLonLimit',geoRasterRef.Lonlim);
-geoshow(gridMask, geoRasterRef);
-[sourceLat, sourceLon] = inputm(1);
-close(fig1);
+sourceLat = sourceShapeStruct(1,1).Lat;
+sourceLon = sourceShapeStruct(1,1).Lon;
 
 %% Generate Source Index Value
 
@@ -85,5 +81,5 @@ indexMask = reshape(indices,gS);
 indexVal = ltln2val(indexMask,geoRasterRef,sourceLat,sourceLon);
 [rowInd, colInd] = find(indexMask == indexVal);
 sourceIndex = [rowInd colInd];
-
+ 
 end

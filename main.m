@@ -3,23 +3,25 @@
 addpath(genpath('~/Repositories/WOGRSS'));
 cd ~/Repositories/WOGRSS
 
-%% Read in Spatial Data Files
+%% Generate Input Parameter Object
 
-hucCodeShapePath = './data/huc10.shp';
-overlayShapePath = './data/caCounties.shp';
-hucCodeShapeStruct = shaperead(hucCodeShapePath,'UseGeoCoords',true);
-overlayShapeStruct = shaperead(overlayShapePath,'UseGeoCoords',true);
+run ./prm/californiaSample.m
 
 %% Select Study Site
 
-[hucID, hucIndex] = getHucCodeFnc(hucCodeShapeStruct,overlayShapeStruct);
+[hucID, hucIndex] = getHucCodeFnc( ...
+    p.hucCodeShapeStruct, ...
+    p.overlayShapeStruct);
 
 %% Generate Grid Mask
 
-gridDensity = 1116.99;
-[gridMask, geoRasterRef] = hucCode2GridMaskFnc(hucCodeShapeStruct,...
-    hucIndex,gridDensity);
+[gridMask, geoRasterRef] = hucCode2GridMaskFnc( ...
+    hucCodeShapeStruct, ...
+    hucIndex, ...
+    p.gridDensity);
 
-%% Plot Grid Mask
+%% Extract Source Index
 
-geoshow(gridMask,geoRasterRef);
+sourceIndex = getSourceIndexFnc( ...
+    geoRasterRef);
+
