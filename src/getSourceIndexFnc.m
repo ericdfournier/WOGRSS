@@ -1,25 +1,22 @@
-function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
-                                                    hucCodeShapeStruct, ...
-                                                    hucIndex, ...
-                                                    gridDensity )
-
-% hucCode2GridMaskFnc.m Function to generate a binary gridMask from a 
-% scalar index value for a basin that has been selected from a 
-% hucCodeShapeStruct.
+function [ sourceIndex ] = getSourceIndexFnc(   gridMask, ...
+                                                overlayShapeStruct, ...
+                                                geoRasterRef )
+% getSourceIndex.m Function which prompts the user to manually select the
+% location of the source index which will be used to initiate the MOGADOR
+% corridor location procedure
 %
 % DESCRIPTION:
 %
-%   Function which extracts and formats a binary grid mask layer for use in
-%   further analysis from an input basin code.
+%   Function which provides the user with a map of the gridMask region and
+%   prompts the user to manually click on the map to generate the row
+%   column indices of the source location to be used in a following
+%   corridor location procedure. 
 % 
 %   Warning: minimal error checking is performed.
 %
 % SYNTAX:
 %
-%   [ gridMask, geoRasterRef ] =  hucCode2GridMaskFnc( ...
-%                                                   hucCodeShapeStruct, ...
-%                                                   hucIndex, ...
-%                                                   gridDensity);
+%   [ sourceIndex ] =  hucCode2GridMaskFnc( gridMask, 
 %
 % INPUTS (REQUIRED): 
 %
@@ -65,16 +62,14 @@ function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x)...
-    x == 3);
-addRequired(P,'nargout',@(x)...
     x == 2);
-addRequired(P,'hucCodeShapeStruct',@(x)...
+addRequired(P,'nargout',@(x)...
+    x == 1);
+addRequired(P,'gridMask',@(x)...
     isstruct(x) &&...
     ~isempty(x));
-addRequired(P,'hucIndex',@(x)...
-    isscalar(x) &&...
-    x > 0 && ...
-    ~isempty(x));
+addRequired(P,'geoRasterRef',@(x)...
+    isstruct(
 addRequired(P,'gridDensity',@(x)...
     isscalar(x) &&...
     x > 0 && ...
@@ -82,36 +77,6 @@ addRequired(P,'gridDensity',@(x)...
 
 parse(P,nargin,nargout,hucCodeShapeStruct,hucIndex,gridDensity);
 
-%% Extract Basin Geometry Data
-
-basinLon = hucCodeShapeStruct(hucIndex,1).Lon;
-basinLat = hucCodeShapeStruct(hucIndex,1).Lat;
-
-%% Generate Grid Mask Output
-
-[gridMask, ~] = vec2mtx(basinLat,basinLon,gridDensity,'filled');
-gridMask(gridMask <= 1) = 1;
-gridMask(gridMask == 2) = 0;
-gridMask = flipud(gridMask(2:end-1,2:end-1));
-
-%% Spatial Reference Parameters
-
-rasterSize = size(gridMask);
-boundingBox = extractfield(hucCodeShapeStruct(hucIndex,1),'BoundingBox');
-lonLim = boundingBox(1,1:2);
-latLim = boundingBox(1,3:4);
-colStart = 'North';
-rowStart = 'West';
-rasterInterp = 'Cells';
-
-%% Generate Output GeoRasterReference Object
-
-geoRasterRef = georasterref(...
-    'RasterSize',rasterSize,...
-    'LatLim',latLim,...
-    'LonLim',lonLim,...
-    'RasterInterpretation',rasterInterp,...
-    'ColumnsStartFrom',colStart,...
-    'RowsStartFrom',rowStart );
 
 end
+

@@ -1,5 +1,5 @@
 function [ hucCode, hucIndex ] = getHucCodeFnc( hucCodeShapeStruct, ...
-                                                overlayShapeStruct )
+                                                overlayShapeStruct )                               )
 % getHucCodeFnc.m Function which provides the user the capability to
 % interactively select a location for the study analysis using meaningful
 % geographic context from an input shapefile data layer and then return the
@@ -31,6 +31,9 @@ function [ hucCode, hucIndex ] = getHucCodeFnc( hucCodeShapeStruct, ...
 %                       provide contextual reference for the user to be
 %                       able to locate the desired location for the study
 %                       analysis.
+%
+%   stateName =         {stateName} character string for the state in which
+%                       the study region is contained.
 %
 % OUTPUTS:
 %
@@ -72,7 +75,7 @@ addRequired(P,'overlayShapeStruct',@(x)...
     isstruct(x) &&...
     ~isempty(x));
 
-parse(P,nargin,nargout,hucCodeShapeStruct,overlayShapeStruct);
+parse(P,nargin,nargout,hucCodeShapeStruct,overlayShapeStruct,stateName);
 
 %% Function Parameters 
 
@@ -87,7 +90,6 @@ end
 
 %% Generate User Map Interface
 
-stateName = 'California';
 mapFig = figure();
 scrn = get(0,'ScreenSize');
 set(mapFig,'Position',scrn);

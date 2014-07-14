@@ -1,7 +1,6 @@
-function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
-                                                    hucCodeShapeStruct, ...
-                                                    hucIndex, ...
-                                                    gridDensity )
+function [ gridMask ] = hucCode2GridMaskFnc(    hucCodeShapeStruct, ...
+                                                hucIndex, ...
+                                                gridDensity )
 
 % hucCode2GridMaskFnc.m Function to generate a binary gridMask from a 
 % scalar index value for a basin that has been selected from a 
@@ -16,10 +15,9 @@ function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
 %
 % SYNTAX:
 %
-%   [ gridMask, geoRasterRef ] =  hucCode2GridMaskFnc( ...
-%                                                   hucCodeShapeStruct, ...
-%                                                   hucIndex, ...
-%                                                   gridDensity);
+%   [ gridMask ] =  hucCode2GridMaskFnc(    hucCodeShapeStruct, ...
+%                                           hucIndex, ...
+%                                           gridDensity);
 %
 % INPUTS (REQUIRED): 
 %
@@ -42,9 +40,7 @@ function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
 %                       labeled as ones and invalid pathway grid cells 
 %                       labeled as zero placeholders
 %
-%   geoRasterRef =      {q} cell orientated geo raster reference object
-%                       providing spatial reference information for the
-%                       input gridMask data layer
+%
 %
 % EXAMPLES:
 %   
@@ -67,7 +63,7 @@ P = inputParser;
 addRequired(P,'nargin',@(x)...
     x == 3);
 addRequired(P,'nargout',@(x)...
-    x == 2);
+    x == 1);
 addRequired(P,'hucCodeShapeStruct',@(x)...
     isstruct(x) &&...
     ~isempty(x));
@@ -92,9 +88,9 @@ basinLat = hucCodeShapeStruct(hucIndex,1).Lat;
 [gridMask, ~] = vec2mtx(basinLat,basinLon,gridDensity,'filled');
 gridMask(gridMask <= 1) = 1;
 gridMask(gridMask == 2) = 0;
-gridMask = flipud(gridMask(2:end-1,2:end-1));
+gridMask = gridMask(2:end-1,2:end-1);
 
-%% Spatial Reference Parameters
+%% Spatial Parameters
 
 rasterSize = size(gridMask);
 boundingBox = extractfield(hucCodeShapeStruct(hucIndex,1),'BoundingBox');
