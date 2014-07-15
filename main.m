@@ -23,5 +23,6 @@ run ./prm/californiaSample.m
 %% Extract Source Index
 
 sourceIndex = getSourceIndexFnc( ...
-    geoRasterRef);
+    geoRasterRef, ...
+    gridMask);
 

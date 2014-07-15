@@ -112,6 +112,12 @@ for i = 1:size(hucCodeShapeStruct,1);
 
 end
 
+if any(inPolyCheck) == 0
+    
+    error('Invalid Selction: Out of Bounds');
+    
+end
+
 %% Generate Output Data
 
 hucIndex = find(inPolyCheck);

@@ -4,13 +4,20 @@ p = struct;
 
 %% Spatial Data Filepaths
 
-p.hucCodeShapePath = './data/huc10.shp';
-p.overlayShapePath = './data/caCounties.shp';
+p.hucCodeShapePath = ...
+    '/Users/ericfournier/Repositories/WOGRSS/data/huc10.shp';
+p.overlayShapePath = ...
+    '/Users/ericfournier/Repositories/WOGRSS/data/caCounties.shp';
 
 %% Create Spatial Data Structure Objects
 
 p.hucCodeShapeStruct = shaperead(p.hucCodeShapePath,'UseGeoCoords',true);
 p.overlayShapeStruct = shaperead(p.overlayShapePath,'UseGeoCoords',true);
+
+%% Input Raster Data File Paths
+
+p.inputRasterDirectory = ...
+    '/Volumes/ERICS_DRIVE/DATA/PHD/Dissertation Project/DEM/Data';
 
 %% Grid Mask Generation Parameters
 
