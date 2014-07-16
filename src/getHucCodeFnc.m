@@ -18,8 +18,8 @@ function [ hucCode, hucIndex ] = getHucCodeFnc( hucCodeShapeStruct, ...
 %
 % SYNTAX:
 %
-%   [ hucCode, hucIndex ] =  getHucCodeFnc( hucCodeShape, ...
-%                                           overlayShape );
+%   [ hucCode, hucIndex ] =  getHucCodeFnc( hucCodeShapeStruct, ...
+%                                           overlayShapeStruct );
 %
 % INPUTS: 
 %

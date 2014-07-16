@@ -1,4 +1,5 @@
-function [ plotHandle ] = rasterMosaicExtentPlot(   rasterMosaicList, ...
+function [ plotHandle ] = rasterMosaicExtentPlot(   overlayShapeStruct, ...
+                                                    rasterMosaicList, ...
                                                     geoRasterRef )
 % rasterMosaicExtentPlot.m Function which provides a visual plot of the
 % spatial extent of a specified source dataset relative to those referenced
@@ -20,10 +21,17 @@ function [ plotHandle ] = rasterMosaicExtentPlot(   rasterMosaicList, ...
 %
 % SYNTAX:
 %
-%   [ plotHandle ] =    rasterMosaicExtentPlot( rasterMosaicList, ...
+%   [ plotHandle ] =    rasterMosaicExtentPlot( overlayShapeStruct, ...
+%                                               rasterMosaicList, ...
 %                                               geoRasterRef )
 %
 % INPUTS: 
+%
+%   overlayShapeStruct = {h x 1} shapefile structure dataset which will be 
+%                       overlaid over the spatial extent to 
+%                       provide contextual reference for the user to be
+%                       able to locate the desired location for the study
+%                       analysis.
 %
 %   mosaicList =        {g x 1} cell array containing the text string file
 %                       names for each raster data file within the input 
@@ -60,9 +68,12 @@ function [ plotHandle ] = rasterMosaicExtentPlot(   rasterMosaicList, ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x) ...
-    x == 2);
+    x == 3);
 addRequired(P,'nargout',@(x) ...
     x >= 0);
+addRequired(P,'overlayShapeStruct',@(x)...
+    isstruct(x) &&...
+    ~isempty(x));
 addRequired(P,'rasterMosaicList',@(x) ...
     iscell(x) && ...
     numel(x) >= 1 && ...
@@ -70,7 +81,7 @@ addRequired(P,'rasterMosaicList',@(x) ...
 addRequired(P,'geoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,rasterMosaicList,geoRasterRef);
+parse(P,nargin,nargout,overlayShapeStruct,rasterMosaicList,geoRasterRef);
 
 %% Function Parameters
 
@@ -85,8 +96,11 @@ referenceLonBox = referenceLonLim([1 2 2 1 1]);
 scrn = get(0,'ScreenSize');
 fig1 = figure();
 set(fig1,'Position',scrn);
+usamap('California');
 
-hold on; 
+hold on;
+
+plotHandle = geoshow(overlayShapeStruct);
 
 for i = 1:listSize
     
@@ -100,7 +114,8 @@ for i = 1:listSize
     
 end
 
-plotHandle = geoshow(referenceLatBox,referenceLonBox,'r');
+geoshow(referenceLatBox,referenceLonBox,'DisplayType','line',...
+    'Color','red','MarkerEdgeColor','auto');
 
 hold off;
 

@@ -117,7 +117,7 @@ end
 if nnz(containmentCheck) == 1
     
     containRasterInfo = rasterInfo{logical(containmentCheck),1};
-    mosaicList = containRasterInfo.Filename;
+    mosaicList{1,1} = containRasterInfo.Filename;
     
 elseif nnz(containmentCheck) == 0 && nnz(intersectionCheck > 0)
     
