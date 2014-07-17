@@ -1,6 +1,6 @@
 function [ mosaicList ] = getRasterMosaicListFnc( ...
                                                 inputRasterDirectory, ...
-                                                geoRasterRef )
+                                                gridMaskGeoRasterRef )
 % getRasterMosaicList.m Function to return a cell array of filenames for
 % the set of raster data files that share the same spatial extent as the
 % file associated with a user specified input geo raster reference object.
@@ -20,7 +20,7 @@ function [ mosaicList ] = getRasterMosaicListFnc( ...
 % SYNTAX:
 %
 %   [ mosaicList ] =    getRasterMosaicListFnc( inputRasterDirectory, ...
-%                                               geoRasterRef )
+%                                               gridMaskGeoRasterRef )
 %
 % INPUTS: 
 %
@@ -29,14 +29,14 @@ function [ mosaicList ] = getRasterMosaicListFnc( ...
 %                       raster datasets which represent the subdivision of
 %                       a large spatial domain, have been stored. 
 %
-%   geoRasterRef =      {struct} the geo raster reference object structure
-%                       describing the spatial characteristics of the 
-%                       raster data layer for which a list of contiguous 
-%                       filepaths is to be generated. 
+%   gridMaskGeoRasterRef = {struct} the geo raster reference object 
+%                       structure describing the spatial characteristics of
+%                       the raster data layer for which a list of 
+%                       contiguous filepaths is to be generated. 
 %
 % OUTPUTS:
 %
-%   mosaicList =        {g x 1} cell array containing the text string file
+%   rasterMosaicList =  {g x 1} cell array containing the text string file
 %                       names for each raster data file within the input 
 %                       raster directory whose spatial extent either 
 %                       contains or intersects the spatial extent of the 
@@ -70,7 +70,7 @@ addRequired(P,'inputRasterDirectory',@(x) ...
 addRequired(P,'geoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,inputRasterDirectory,geoRasterRef);
+parse(P,nargin,nargout,inputRasterDirectory,gridMaskGeoRasterRef);
 
 %% Function Parameters
 
@@ -86,8 +86,8 @@ for i = 1:numel(files)
     
 end
 
-referenceLatLim = geoRasterRef.Latlim;
-referenceLonLim = geoRasterRef.Lonlim;
+referenceLatLim = gridMaskGeoRasterRef.Latlim;
+referenceLonLim = gridMaskGeoRasterRef.Lonlim;
 referenceLatBox = referenceLatLim([1 1 2 2 1]);
 referenceLonBox = referenceLonLim([1 2 2 1 1]);
 

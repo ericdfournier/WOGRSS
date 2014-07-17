@@ -92,7 +92,7 @@ basinLat = hucCodeShapeStruct(hucIndex,1).Lat;
 [gridMask, ~] = vec2mtx(basinLat,basinLon,gridDensity,'filled');
 gridMask(gridMask <= 1) = 1;
 gridMask(gridMask == 2) = 0;
-gridMask = flipud(gridMask(2:end-1,2:end-1));
+gridMask = flipud(gridMask);
 
 %% Spatial Reference Parameters
 
