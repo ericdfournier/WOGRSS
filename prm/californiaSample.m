@@ -17,7 +17,7 @@ p.overlayShapeStruct = shaperead(p.overlayShapePath,'UseGeoCoords',true);
 %% Input Raster Data File Paths
 
 p.inputRasterDirectory = ...
-    '/Users/ericfournier/Desktop/raster';
+    '/Volumes/ERICS_DRIVE/DATA/PHD/Dissertation Project/DEM/Data';
 
 %% Grid Mask Generation Parameters
 
