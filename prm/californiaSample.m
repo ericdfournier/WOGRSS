@@ -25,4 +25,4 @@ p.gridDensity = 1116.99;
 
 %% Raster Mosaic Generation Parameters
 
-p.rasterNanValue = -3.0e+30;
+p.rasterNanFloor = -3.0e+30;
