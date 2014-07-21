@@ -1,0 +1,109 @@
+function [ plotHandle ] = rasterBasinOutlinePlot( ...
+                                                inputRasterData, ...
+                                                gridMaskGeoRasterRef, ...
+                                                hucCodeShapeStruct, ...
+                                                hucIndex )
+% rasterBasinOutlinePlot.m Function to map a given raster dataset relative
+% to the outline of the gridMask reference basin to provide a visual
+% illustration of its spatial context
+% 
+% Note: The routine assumes that all of the spatial data files involved
+% have been previously been projected into the same geographic coordinate
+% system
+%
+% DESCRIPTION:
+%
+%   Function to return the plot handle of a map figure containing a visual
+%   representation of an input raster dataset with the outline of the
+%   gridMask reference basin for visual context. 
+% 
+%   Warning: minimal error checking is performed.
+%
+% SYNTAX:
+%
+%   [ plotHandle ] =    rasterBasinOutlinePlot( inputRasterData, ...
+%                                               gridMaskGeoRasterRef, ...
+%                                               hucCodeShapeStruct, ...
+%                                               hucIndex )
+%
+% INPUTS: 
+%
+%   overlayShapeStruct = {h x 1} shapefile structure dataset which will be 
+%                       overlaid over the spatial extent to 
+%                       provide contextual reference for the user to be
+%                       able to locate the desired location for the study
+%                       analysis.
+%
+%   mosaicList =        {g x 1} cell array containing the text string file
+%                       names for each raster data file within the input 
+%                       raster directory whose spatial extent either 
+%                       contains or intersects the spatial extent of the 
+%                       data file described in the geoRasterRef
+%
+%   gridMaskGeoRasterRef = {struct} the geo raster reference object structure
+%                       describing the spatial characteristics of the 
+%                       raster data layer for which a list of contiguous 
+%                       filepaths is to be generated. 
+%
+% OUTPUTS:
+%
+%   plotHandle =        [s] scalar plot handle variable referencing the
+%                       generated output map plot. 
+%
+% EXAMPLES:
+%   
+%   Example 1 =
+%
+% CREDITS:
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                                                      %%
+%%%                          Eric Daniel Fournier                        %%
+%%%                  Bren School of Environmental Science                %%
+%%%                 University of California Santa Barbara               %%
+%%%                                                                      %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Parse Inputs
+
+P = inputParser;
+
+addRequired(P,'nargin',@(x) ...
+    x == 4);
+addRequired(P,'nargout',@(x) ...
+    x <= 1);
+addRequired(P,'inputRasterData',@(x) ...
+    isnumeric(x) && ...
+    ismatrix(x) && ...
+    ~isempty(x));
+addRequired(P,'gridMaskGeoRasterRef',@(x) ...
+    isa(x,'spatialref.GeoRasterReference'));
+addRequired(P,'hucCodeShapeStruct',@(x) ...
+    isstruct(x) && ...
+    ~isempty(x));
+addRequired(P,'hucIndex',@(x) ...
+    isscalar(x) && ...
+    ~isempty(x));
+
+parse(P,nargin,nargout,inputRasterData,gridMaskGeoRasterRef, ...
+    hucCodeShapeStruct,hucIndex);
+
+%% Function Parameters
+
+basinOutline = hucCodeShapeStruct(hucIndex,1);
+
+%% Generate Output Plot
+
+scrn = get(0,'ScreenSize');
+fig1 = figure();
+set(fig1,'Position',scrn);
+
+usamap(gridMaskGeoRasterRef.Latlim,gridMaskGeoRasterRef.Lonlim);
+
+hold on;
+geoshow(inputRasterData,gridMaskGeoRasterRef,'DisplayType','texture');
+colorbar;
+geoshow(basinOutline,'DisplayType','polygon','FaceColor','none');
+hold off;
+
+end

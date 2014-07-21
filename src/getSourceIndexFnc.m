@@ -1,4 +1,4 @@
-function [ sourceIndex ] = getSourceIndexFnc(   geoRasterRef, ...
+function [ sourceIndex ] = getSourceIndexFnc(   gridMaskGeoRasterRef, ...
                                                 gridMask )
 % getSourceIndexFnc.m Function which prompts the user to manually select the
 % location of the source index which will be used to initiate the MOGADOR
@@ -15,14 +15,14 @@ function [ sourceIndex ] = getSourceIndexFnc(   geoRasterRef, ...
 %
 % SYNTAX:
 %
-%   [ sourceIndex ] =  getSourceIndexFnc(   geoRasterRef, ...
+%   [ sourceIndex ] =  getSourceIndexFnc(   gridMaskGeoRasterRef, ...
 %                                           gridMask );
 %
 % INPUTS: 
 %
-%   geoRasterRef =      {q} cell orientated geo raster reference object
-%                       providing spatial reference information for the
-%                       input gridMask data layer
+%   gridMaskGeoRasterRef = {q} cell orientated geo raster reference 
+%                       object providing spatial reference information for 
+%                       the input gridMask data layer
 %
 %   gridMask =          [n x m] binary array with valid pathway grid cells 
 %                       labeled as ones and invalid pathway grid cells 
@@ -32,8 +32,8 @@ function [ sourceIndex ] = getSourceIndexFnc(   geoRasterRef, ...
 %
 %   sourceIndex =       [1 x 2] row vector containing the row column
 %                       indices of the source location with respect to the 
-%                       gridMask data layer described by the geoRasterRef
-%                       object
+%                       gridMask data layer described by the 
+%                       gridMaskGeoRasterRef object
 %
 % EXAMPLES:
 %   
@@ -57,17 +57,17 @@ addRequired(P,'nargin',@(x)...
     x == 2);
 addRequired(P,'nargout',@(x)...
     x == 1);
-addRequired(P,'geoRasterRef',@(x)...
+addRequired(P,'gridMaskGeoRasterRef',@(x)...
     isa(x,'spatialref.GeoRasterReference'));
 addRequired(P,'gridMask',@(x)...
     ismatrix(x) && ...
     ~isempty(x));
 
-parse(P,nargin,nargout,geoRasterRef,gridMask);
+parse(P,nargin,nargout,gridMaskGeoRasterRef,gridMask);
 
 %% Function Parameters
 
-gS = geoRasterRef.RasterSize;
+gS = gridMaskGeoRasterRef.RasterSize;
 
 %% Generate Interactive Map Plot
 
@@ -75,8 +75,8 @@ scrn = get(0,'ScreenSize');
 fig1 = figure();
 set(fig1,'Position',scrn);
 
-usamap(geoRasterRef.Latlim,geoRasterRef.Lonlim);
-geoshow(gridMask, geoRasterRef);
+usamap(gridMaskGeoRasterRef.Latlim,gridMaskGeoRasterRef.Lonlim);
+geoshow(gridMask, gridMaskGeoRasterRef);
 [sourceLat, sourceLon] = inputm(1);
 close(fig1);
 
@@ -84,7 +84,7 @@ close(fig1);
 
 indices = 1:1:(gS(1,1)*gS(1,2));
 indexMask = reshape(indices,gS);
-indexVal = ltln2val(indexMask,geoRasterRef,sourceLat,sourceLon);
+indexVal = ltln2val(indexMask,gridMaskGeoRasterRef,sourceLat,sourceLon);
 [rowInd, colInd] = find(indexMask == indexVal);
 sourceIndex = [rowInd colInd];
 
