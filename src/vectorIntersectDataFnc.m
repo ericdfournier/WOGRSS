@@ -134,44 +134,52 @@ end
 
 validInd = logical(validInd);
 
-if all(~validInd) == 1
+switch all(~validInd)
     
-    error('No Intersection Between Basin Outline and InputShapeStruct');
+    % Valid Intersection Exists
     
-end
-
-intersectLat = intersectLat(validInd,1);
-intersectLon = intersectLon(validInd,1);
-
-%% Extract Original Feature Data Elements
-
-outputShapeStruct = inputShapeStruct(validInd,1);
-
-%% Overwrite Latitude Longitude Coordinates and Bounding Boxes
-
-boundingBox = zeros(2,2);
-
-for i = 1:numel(intersectLat)
+    case 0
+        
+        intersectLat = intersectLat(validInd,1);
+        intersectLon = intersectLon(validInd,1);
+        
+        % Extract Original Feature Data Elements
+        
+        outputShapeStruct = inputShapeStruct(validInd,1);
+        
+        % Overwrite Latitude Longitude Coordinates and Bounding Boxes
+        
+        boundingBox = zeros(2,2);
+        
+        for i = 1:numel(intersectLat)
+            
+            rawIntLat = intersectLat{i,1}';
+            intLat = nan(1,size(rawIntLat,2)+1);
+            intLat(1,1:end-1) = rawIntLat;
+            
+            rawIntLon = intersectLon{i,1}';
+            intLon = nan(1,size(rawIntLon,2)+1);
+            intLon(1,1:end-1) = rawIntLon;
+            
+            [intLat, intLon] = poly2ccw(intLat,intLon);
+            
+            outputShapeStruct(i,1).Lat = intLat;
+            outputShapeStruct(i,1).Lon = intLon;
+            
+            boundingBox(1,1) = min(intLon);
+            boundingBox(2,1) = max(intLon);
+            boundingBox(1,2) = min(intLat);
+            boundingBox(2,2) = max(intLat);
+            
+            outputShapeStruct(i,1).BoundingBox = boundingBox;
+            
+        end
+        
+    % No Valid Intersection Exists
+        
+    case 1
     
-    rawIntLat = intersectLat{i,1}';
-    intLat = nan(1,size(rawIntLat,2)+1);
-    intLat(1,1:end-1) = rawIntLat;
-    
-    rawIntLon = intersectLon{i,1}';
-    intLon = nan(1,size(rawIntLon,2)+1);
-    intLon(1,1:end-1) = rawIntLon;
-    
-    [intLat, intLon] = poly2ccw(intLat,intLon);
-    
-    outputShapeStruct(i,1).Lat = intLat;
-    outputShapeStruct(i,1).Lon = intLon;
-    
-    boundingBox(1,1) = min(intLon);
-    boundingBox(2,1) = max(intLon);
-    boundingBox(1,2) = min(intLat);
-    boundingBox(2,2) = max(intLat);
-    
-    outputShapeStruct(i,1).BoundingBox = boundingBox;
+    outputShapeStruct = [];
     
 end
 

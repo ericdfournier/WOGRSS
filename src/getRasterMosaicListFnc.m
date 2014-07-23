@@ -1,4 +1,4 @@
-function [ mosaicList ] = getRasterMosaicListFnc( ...
+function [ rasterMosaicList ] = getRasterMosaicListFnc( ...
                                                 inputRasterDirectory, ...
                                                 gridMaskGeoRasterRef )
 % getRasterMosaicList.m Function to return a cell array of filenames for
@@ -19,7 +19,8 @@ function [ mosaicList ] = getRasterMosaicListFnc( ...
 %
 % SYNTAX:
 %
-%   [ mosaicList ] =    getRasterMosaicListFnc( inputRasterDirectory, ...
+%   [ rasterMosaicList ] = getRasterMosaicListFnc( ...
+%                                               inputRasterDirectory, ...
 %                                               gridMaskGeoRasterRef )
 %
 % INPUTS: 
@@ -117,16 +118,16 @@ end
 if nnz(containmentCheck) == 1
     
     containRasterInfo = rasterInfo{logical(containmentCheck),1};
-    mosaicList{1,1} = containRasterInfo.Filename;
+    rasterMosaicList{1,1} = containRasterInfo.Filename;
     
 elseif nnz(containmentCheck) == 0 && nnz(intersectionCheck > 0)
     
     intersectRasterInfo = rasterInfo(logical(intersectionCheck),1);
-    mosaicList = cell(numel(intersectRasterInfo),1);
+    rasterMosaicList = cell(numel(intersectRasterInfo),1);
     
     for i = 1:numel(intersectRasterInfo)
         
-        mosaicList{i,1} = intersectRasterInfo{i,1}.Filename;
+        rasterMosaicList{i,1} = intersectRasterInfo{i,1}.Filename;
     
     end
     
