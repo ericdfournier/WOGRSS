@@ -3,6 +3,77 @@ function [ vectorMosaicCell ] = extractVectorMosaicDataFnc( ...
                                                 hucCodeShapeStruct, ...
                                                 hucIndex, ...
                                                 gridMaskGeoRasterRef )
+% extractVectorMosaicDataFnc.m Function to iteratively generate vector
+% mosaic datasets for all raster data files within a set of sub-directories
+% stored beneath a top level vector data storage directory. The vector
+% mosaic files are generated with respect to the spatial extent of the
+% basin boundary described by the hucCodeShapeStruct element corresponding
+% with the hucIndex provided. 
+%
+%
+% DESCRIPTION:
+%
+%   Function which generates an output cell array of vector mosaic datasets
+%   for each vector dataset contained in the subdirectories of a top level
+%   vector data storage directory. In each case the vector mosaic dataset
+%   is created by intersecting the disperate vector data files contained
+%   within each subdirectory with the polygonal geometry of the huc
+%   checking for any overlap with the spatial extent of the basin geometry
+%   associated with the hucCodeShapeStruct element defined by the hucIndex.
+% 
+%   Warning: minimal error checking is performed.
+%
+% SYNTAX:
+%
+%   [ vectorMosaicCell ] =  extractVectorMosaicDataFnc( ...
+%                                                   topLevelVectorDir, ...
+%                                                   hucCodeShapeStruct, ...
+%                                                   hucIndex, ...
+%                                                   gridMaskGeoRasterRef )
+%
+% INPUTS: 
+%
+%   topLevelVectorDir = (1 x k) character array containing the text file
+%                       names for the top level vector data directory
+%                       containing a set of sub-directories storing all of
+%                       the individual mosaic data files for each vector
+%                       data category to be used in the analysis
+%
+%   hucCodeShapeStruct = {j x 1} shapefile structure array containing the
+%                       shapefile data for the basin delineations
+%
+%   hucIndex =          [a] scalar value indicating the index of the
+%                       hucCodeShapeStruct array corresponding to the 
+%                       desired reference basin
+%
+%   gridMaskGeoRasterRef = {q} cell orientated geo raster reference object
+%                       providing spatial reference information for the
+%                       reference basin gridMask data layer
+% 
+% OUTPUTS:
+%
+%   vectorMosaicCell =  {r x 1} cell array in which each cell element 
+%                       contains a vector dataset with the same spatial
+%                       reference information as that contained in the 
+%                       gridMaskGeoRasterRef but the individual component
+%                       geometries have been derived as the product of the
+%                       intersection of the source vector data layers with
+%                       the basin outline geometry
+%
+% EXAMPLES:
+%   
+%   Example 1 =
+%
+% CREDITS:
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                                                                      %%
+%%%                          Eric Daniel Fournier                        %%
+%%%                  Bren School of Environmental Science                %%
+%%%                 University of California Santa Barbara               %%
+%%%                                                                      %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Parse Inputs
 
 P = inputParser;

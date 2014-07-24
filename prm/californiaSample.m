@@ -16,8 +16,10 @@ p.overlayShapeStruct = shaperead(p.overlayShapePath,'UseGeoCoords',true);
 
 %% Input Raster Data File Paths
 
-p.inputRasterDirectory = ...
-    '/Users/ericfournier/Desktop/raster/geotiff';
+p.topLevelRasterDir = ...
+    '/Users/ericfournier/Desktop/raster';
+p.topLevelVectorDir = ...
+    '/Users/ericfournier/Desktop/vector';
 
 %% Grid Mask Generation Parameters
 

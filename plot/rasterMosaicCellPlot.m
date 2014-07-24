@@ -1,36 +1,27 @@
-function [ plotHandle ] = rasterBasinOutlinePlot( ...
-                                                inputRasterData, ...
+function [ plotHandle ] = rasterMosaicCellPlot( rasterMosaicCell, ...
                                                 hucCodeShapeStruct, ...
                                                 hucIndex, ...
                                                 gridMaskGeoRasterRef )
-% rasterBasinOutlinePlot.m Function to map a given raster dataset relative
-% to the outline of the gridMask reference basin to provide a visual
-% illustration of its spatial context
-% 
-% Note: The routine assumes that all of the spatial data files involved
-% have been previously been projected into the same geographic coordinate
-% system
+% vectorMosaicCellPlot.m Function to provide a panel of subplots for each
+% of the vector datasets contained within an input vectorMosaicCell data
+% structure.
 %
 % DESCRIPTION:
 %
-%   Function to return the plot handle of a map figure containing a visual
-%   representation of an input raster dataset with the outline of the
-%   gridMask reference basin for visual context. 
+%   Function to return a panel of subplots for each of the vector datasets
+%   contained within an input vectorMosaicCell data structure. 
 % 
 %   Warning: minimal error checking is performed.
 %
 % SYNTAX:
 %
-%   [ plotHandle ] =    rasterBasinOutlinePlot( inputRasterData, ...
-%                                               hucCodeShapeStruct, ...
-%                                               hucIndex, ...
+%   [ plotHandle ] =    vectorMosaicCellPlot(   inputRasterData, ...
 %                                               gridMaskGeoRasterRef )
 %
 % INPUTS: 
 %
-%   inputRasterData =   [n x m] matrix containing the values for some data
-%                       source that is to be displayed as a texture map
-%                       relative to the outline of the reference basin
+%   vectorMosaicCell =  {j x 2} cell array containing the input vector
+%                       mosaic datasets to be plotted
 %
 %   hucCodeShapeStruct = {f x 1} shapefile structure array containing the
 %                       polygonal boundary data for each hucCode region 
@@ -39,7 +30,7 @@ function [ plotHandle ] = rasterBasinOutlinePlot( ...
 %   hucIndex =          [w] scalara value containing the reference index
 %                       value for the desired huc boundary shape data 
 %                       relative to the elements in the input 
-%                       hucCodeShapeStruct.
+%                       hucCodeShapeStruct
 %
 %   gridMaskGeoRasterRef = {struct} the geo raster reference object struct
 %                       describing the spatial characteristics of the 
@@ -72,11 +63,9 @@ P = inputParser;
 addRequired(P,'nargin',@(x) ...
     x == 4);
 addRequired(P,'nargout',@(x) ...
-    x <= 1);
-addRequired(P,'inputRasterData',@(x) ...
-    isnumeric(x) && ...
-    ismatrix(x) && ...
-    ~isempty(x));
+    x >= 0);
+addRequired(P,'rasterMosaicCell',@(x) ...
+    iscell(x));
 addRequired(P,'hucCodeShapeStruct',@(x) ...
     isstruct(x) && ...
     ~isempty(x));
@@ -86,21 +75,48 @@ addRequired(P,'hucIndex',@(x) ...
 addRequired(P,'gridMaskGeoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,inputRasterData, ....
-    hucCodeShapeStruct,hucIndex,gridMaskGeoRasterRef);
+parse(P,nargin,nargout,rasterMosaicCell,hucCodeShapeStruct,hucIndex,...
+    gridMaskGeoRasterRef);
 
 %% Function Parameters
 
-basinOutline = hucCodeShapeStruct(hucIndex,1);
+fullCells = ~cellfun(@isempty,rasterMosaicCell(:,1));
+plotCount = sum(fullCells);
+plotInd = find(fullCells);
+plotDimRaw = round(sqrt(plotCount));
+
+if mod(plotDimRaw,2) == 0
+    
+    plotDim1 = plotDimRaw;
+    plotDim2 = plotDimRaw;
+    
+elseif mod(plotDimRaw,2) == 1
+    
+    plotDim1 = plotDimRaw;
+    plotDim2 = ceil(plotCount./plotDimRaw);
+    
+end
+
+latLim = gridMaskGeoRasterRef.Latlim;
+lonLim = gridMaskGeoRasterRef.Lonlim;
 
 %% Generate Output Plot
+scrn = get(0,'ScreenSize');
+plotHandle = figure();
+set(plotHandle,'Position',scrn);
 
-usamap(gridMaskGeoRasterRef.Latlim,gridMaskGeoRasterRef.Lonlim);
+for i = 1:plotCount
+    
+currentInd = plotInd(i);
+subplot(plotDim1,plotDim2,i);
+usamap(latLim, lonLim);
+rasterBasinOutlinePlot( ...
+    rasterMosaicCell{currentInd,1}, ...
+    hucCodeShapeStruct, ...
+    hucIndex, ...
+    gridMaskGeoRasterRef );
+title(['Data Source: ',rasterMosaicCell{currentInd,2}]);
 
-hold on;
-geoshow(inputRasterData,gridMaskGeoRasterRef,'DisplayType','texture');
-colorbar;
-geoshow(basinOutline,'DisplayType','polygon','FaceColor','none');
-hold off;
+end
 
 end
