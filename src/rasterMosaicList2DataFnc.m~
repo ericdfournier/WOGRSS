@@ -129,4 +129,5 @@ end
 
 rasterMosaicData = flipud(rasterMosaicData);
 rasterMosaicData = gridMask.*rasterMosaicData;
+
 end

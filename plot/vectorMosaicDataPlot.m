@@ -1,24 +1,24 @@
-function [ plotHandle ] = vectorMosaicCellPlot( vectorMosaicCell, ...
+function [ plotHandle ] = vectorMosaicDataPlot( vectorMosaicData, ...
                                                 gridMaskGeoRasterRef )
-% vectorMosaicCellPlot.m Function to provide a panel of subplots for each
-% of the vector datasets contained within an input vectorMosaicCell data
+% vectorMosaicDataPlot.m Function to provide a panel of subplots for each
+% of the vector datasets contained within an input vectorMosaicData data
 % structure.
 %
 % DESCRIPTION:
 %
 %   Function to return a panel of subplots for each of the vector datasets
-%   contained within an input vectorMosaicCell data structure. 
+%   contained within an input vectorMosaicData data structure. 
 % 
 %   Warning: minimal error checking is performed.
 %
 % SYNTAX:
 %
-%   [ plotHandle ] =    vectorMosaicCellPlot(   inputRasterData, ...
+%   [ plotHandle ] =    vectorMosaicDataPlot(   inputRasterData, ...
 %                                               gridMaskGeoRasterRef )
 %
 % INPUTS: 
 %
-%   vectorMosaicCell =  {j x 2} cell array containing the input vector
+%   vectorMosaicData =  {j x 2} cell array containing the input vector
 %                       mosaic datasets to be plotted
 %
 %   gridMaskGeoRasterRef = {struct} the geo raster reference object struct
@@ -53,16 +53,16 @@ addRequired(P,'nargin',@(x) ...
     x == 2);
 addRequired(P,'nargout',@(x) ...
     x >= 0);
-addRequired(P,'vectorMosaicCell',@(x) ...
+addRequired(P,'vectorMosaicData',@(x) ...
     iscell(x));
 addRequired(P,'gridMaskGeoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,vectorMosaicCell,gridMaskGeoRasterRef);
+parse(P,nargin,nargout,vectorMosaicData,gridMaskGeoRasterRef);
 
 %% Function Parameters
 
-fullCells = ~cellfun(@isempty,vectorMosaicCell(:,1));
+fullCells = ~cellfun(@isempty,vectorMosaicData(:,1));
 plotCount = sum(fullCells);
 plotInd = find(fullCells);
 plotDimRaw = round(sqrt(plotCount));
@@ -93,8 +93,8 @@ for i = 1:plotCount
 currentInd = plotInd(i);
 subplot(plotDim1,plotDim2,i);
 usamap(latLim, lonLim);
-geoshow(vectorMosaicCell{currentInd,1});
-title(['Data Source: ',vectorMosaicCell{currentInd,2}]);
+geoshow(vectorMosaicData{currentInd,1});
+title(['Data Source: ',vectorMosaicData{currentInd,2}]);
 
 end
 

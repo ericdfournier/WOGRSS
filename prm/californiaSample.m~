@@ -31,6 +31,3 @@ p.rasterNanFloor = -3.0e+30;
 
 %% Shape Struct Attribute Field Parameters
 
-p.attributeFieldCell = {'FIPS'; ...
-                        'GEOL_DD1'; ...
-                        'UNITNUM'};

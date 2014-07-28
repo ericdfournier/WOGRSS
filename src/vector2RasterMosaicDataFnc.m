@@ -100,20 +100,23 @@ parse(P,nargin,nargout,inputVectorMosaicData,attributeFieldCell,...
     gridMask,gridMaskGeoRasterRef);
 
 %% Function Parameters
-    
-shapeCount = numel(inputVectorMosaicData);
+
+validVec = ~cellfun(@isempty,inputVectorMosaicData(:,1));
+shapeCount = sum(validVec);
 outputRasterMosaicData = cell(shapeCount,2);
+validInd = find(validVec);
 
 %% Perform Data Type Conversion and Generate Final Output
 
 for i = 1:shapeCount
-   
+    
+    currentInd = validInd(i);
     outputRasterMosaicData{i,1} = vector2RasterDataFnc( ...
-        inputVectorMosaicData{i,1}, ...
-        attributeFieldCell{i,1}, ...
+        inputVectorMosaicData{currentInd,1}, ...
+        attributeFieldCell{currentInd,1}, ...
         gridMask, ...
         gridMaskGeoRasterRef );
-    outputRasterMosaicData{i,2} = inputVectorMosaicData{i,2};
+    outputRasterMosaicData{i,2} = inputVectorMosaicData{currentInd,2};
     
 end
 
