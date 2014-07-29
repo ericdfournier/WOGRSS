@@ -5,9 +5,9 @@ p = struct;
 %% Spatial Data Filepaths
 
 p.hucCodeShapePath = ...
-    '/Users/ericfournier/Repositories/WOGRSS/data/huc10.shp';
+    '/Users/ericfournier/Repositories/WOGRSS/data/vector/huc10/huc10.shp';
 p.overlayShapePath = ...
-    '/Users/ericfournier/Repositories/WOGRSS/data/caCounties.shp';
+    '/Users/ericfournier/Repositories/WOGRSS/data/vector/counties/counties.shp';
 
 %% Create Spatial Data Structure Objects
 

@@ -73,12 +73,13 @@ parse(P,nargin,nargout,inputRasterData, ....
 
 latLim = gridMaskGeoRasterRef.Latlim;
 lonLim = gridMaskGeoRasterRef.Lonlim;
+[cmapRasterData, newMap] = cmunique(inputRasterData);
 
 %% Generate Output Plot
 
 usamap(latLim,lonLim);
-plotHandle = geoshow(inputRasterData,gridMaskGeoRasterRef,...
-    'DisplayType','texture');
+plotHandle = geoshow(cmapRasterData,gridMaskGeoRasterRef,...
+    'DisplayType','texturemap');
 colorbar;
 
 end
