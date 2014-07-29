@@ -1,8 +1,5 @@
-function [ plotHandle ] = rasterBasinOutlinePlot( ...
-                                                inputRasterData, ...
-                                                hucCodeShapeStruct, ...
-                                                hucIndex, ...
-                                                gridMaskGeoRasterRef )
+function [ plotHandle ] = rasterBasinOutlinePlot(   inputRasterData, ...
+                                                    gridMaskGeoRasterRef )
 % rasterBasinOutlinePlot.m Function to map a given raster dataset relative
 % to the outline of the gridMask reference basin to provide a visual
 % illustration of its spatial context
@@ -22,8 +19,6 @@ function [ plotHandle ] = rasterBasinOutlinePlot( ...
 % SYNTAX:
 %
 %   [ plotHandle ] =    rasterBasinOutlinePlot( inputRasterData, ...
-%                                               hucCodeShapeStruct, ...
-%                                               hucIndex, ...
 %                                               gridMaskGeoRasterRef )
 %
 % INPUTS: 
@@ -31,15 +26,6 @@ function [ plotHandle ] = rasterBasinOutlinePlot( ...
 %   inputRasterData =   [n x m] matrix containing the values for some data
 %                       source that is to be displayed as a texture map
 %                       relative to the outline of the reference basin
-%
-%   hucCodeShapeStruct = {f x 1} shapefile structure array containing the
-%                       polygonal boundary data for each hucCode region 
-%                       within the state
-%   
-%   hucIndex =          [w] scalara value containing the reference index
-%                       value for the desired huc boundary shape data 
-%                       relative to the elements in the input 
-%                       hucCodeShapeStruct.
 %
 %   gridMaskGeoRasterRef = {struct} the geo raster reference object struct
 %                       describing the spatial characteristics of the 
@@ -70,37 +56,29 @@ function [ plotHandle ] = rasterBasinOutlinePlot( ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x) ...
-    x == 4);
+    x == 2);
 addRequired(P,'nargout',@(x) ...
     x <= 1);
 addRequired(P,'inputRasterData',@(x) ...
     isnumeric(x) && ...
     ismatrix(x) && ...
     ~isempty(x));
-addRequired(P,'hucCodeShapeStruct',@(x) ...
-    isstruct(x) && ...
-    ~isempty(x));
-addRequired(P,'hucIndex',@(x) ...
-    isscalar(x) && ...
-    ~isempty(x));
 addRequired(P,'gridMaskGeoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
 parse(P,nargin,nargout,inputRasterData, ....
-    hucCodeShapeStruct,hucIndex,gridMaskGeoRasterRef);
+    gridMaskGeoRasterRef);
 
 %% Function Parameters
 
-basinOutline = hucCodeShapeStruct(hucIndex,1);
+latLim = gridMaskGeoRasterRef.Latlim;
+lonLim = gridMaskGeoRasterRef.Lonlim;
 
 %% Generate Output Plot
 
-usamap(gridMaskGeoRasterRef.Latlim,gridMaskGeoRasterRef.Lonlim);
-
-hold on;
-geoshow(inputRasterData,gridMaskGeoRasterRef,'DisplayType','texture');
+usamap(latLim,lonLim);
+plotHandle = geoshow(inputRasterData,gridMaskGeoRasterRef,...
+    'DisplayType','texture');
 colorbar;
-geoshow(basinOutline,'DisplayType','polygon','FaceColor','none');
-hold off;
 
 end
