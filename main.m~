@@ -20,6 +20,10 @@ run ./prm/californiaSample.m
     hucIndex, ...
     p.gridDensity);
 
+%% View Grid Mask
+
+rasterDataPlot(
+
 %% Generate Raster Mosaic Cell Dataset
 
 rasterMosaicData = extractRasterMosaicDataFnc( ...
