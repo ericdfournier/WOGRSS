@@ -90,13 +90,11 @@ set(plotHandle,'Position',scrn);
 
 for i = 1:plotCount
     
-currentInd = plotInd(i);
-subplot(plotDim1,plotDim2,i);
-usamap(latLim, lonLim);
-rasterBasinOutlinePlot( ...
-    rasterMosaicData{currentInd,1}, ...
-    gridMaskGeoRasterRef );
-title(['Data Source: ',rasterMosaicData{currentInd,2}]);
+    currentInd = plotInd(i);
+    subplot(plotDim1,plotDim2,i);
+    usamap(latLim, lonLim);
+    rasterDataPlot(rasterMosaicData{currentInd,1},gridMaskGeoRasterRef);
+    title(['Data Source: ',rasterMosaicData{currentInd,2}]);
 
 end
 
