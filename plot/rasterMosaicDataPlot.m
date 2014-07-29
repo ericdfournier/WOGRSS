@@ -65,16 +65,16 @@ parse(P,nargin,nargout,rasterMosaicData,gridMaskGeoRasterRef);
 fullCells = ~cellfun(@isempty,rasterMosaicData(:,1));
 plotCount = sum(fullCells);
 plotInd = find(fullCells);
-plotDimRaw = round(sqrt(plotCount));
+plotDimRaw = sqrt(plotCount);
 
 if mod(plotDimRaw,2) == 0
     
     plotDim1 = plotDimRaw;
     plotDim2 = plotDimRaw;
     
-elseif mod(plotDimRaw,2) == 1
+else
     
-    plotDim1 = plotDimRaw;
+    plotDim1 = floor(plotDimRaw);
     plotDim2 = ceil(plotCount./plotDimRaw);
     
 end
@@ -83,6 +83,7 @@ latLim = gridMaskGeoRasterRef.Latlim;
 lonLim = gridMaskGeoRasterRef.Lonlim;
 
 %% Generate Output Plot
+
 scrn = get(0,'ScreenSize');
 plotHandle = figure();
 set(plotHandle,'Position',scrn);
