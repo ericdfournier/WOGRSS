@@ -114,8 +114,21 @@ rasterMosaicData = nan(gridMaskGeoRasterRef.RasterSize(1,1), ...
 
 for i = 1:listSize
         
-        [currentRaster, currentGeoRasterRef] = ...
-            geotiffread(rasterMosaicList{i,1});
+        currentRasterInfo = geotiffinfo(rasterMosaicList{i,1});
+        indexed = strcmp(currentRasterInfo.ColorType,'indexed');
+        
+        if indexed == 1
+            
+            [currentRaster, ~, currentGeoRasterRef] = ...
+                geotiffread(rasterMosaicList{i,1});
+            
+        else
+            
+            [currentRaster, currentGeoRasterRef] = ...
+                geotiffread(rasterMosaicList{i,1});
+            
+        end
+        
         currentRaster(currentRaster <= rasterNanFloor) = nan;
         
         currentValVec = ltln2val(currentRaster, ...

@@ -131,7 +131,7 @@ elseif nnz(containmentCheck) == 0 && nnz(intersectionCheck > 0)
     
     end
     
-elseif nnz(containmentCheck) == 0 && nnz(intersectionCheck == 0)
+else
     
     error('No Mosaic List Can Be Constructed from Input Raster Data');
     
