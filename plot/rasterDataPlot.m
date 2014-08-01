@@ -1,4 +1,5 @@
 function [ plotHandle ] = rasterDataPlot(   inputRasterData, ...
+                                            gridMask, ...
                                             gridMaskGeoRasterRef )
 % rasterDataPlot.m Function to map a given raster dataset relative
 % to the outline of the gridMask reference basin to provide a visual
@@ -19,6 +20,7 @@ function [ plotHandle ] = rasterDataPlot(   inputRasterData, ...
 % SYNTAX:
 %
 %   [ plotHandle ] =    rasterDataPlot( inputRasterData, ...
+%                                       gridMask, ...
 %                                       gridMaskGeoRasterRef )
 %
 % INPUTS: 
@@ -26,6 +28,11 @@ function [ plotHandle ] = rasterDataPlot(   inputRasterData, ...
 %   inputRasterData =   [n x m] matrix containing the values for some data
 %                       source that is to be displayed as a texture map
 %                       relative to the outline of the reference basin
+%
+%   gridMask =          [n x m] binary array in which cells with a value of
+%                       1 are located within the basin of interest and 
+%                       cells with a value of 0 are located outside of the 
+%                       basin of interest
 %
 %   gridMaskGeoRasterRef = {struct} the geo raster reference object struct
 %                       describing the spatial characteristics of the 
@@ -56,28 +63,33 @@ function [ plotHandle ] = rasterDataPlot(   inputRasterData, ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x) ...
-    x == 2);
+    x == 3);
 addRequired(P,'nargout',@(x) ...
-    x <= 1);
+    x >= 0);
 addRequired(P,'inputRasterData',@(x) ...
+    isnumeric(x) && ...
+    ismatrix(x) && ...
+    ~isempty(x));
+addRequired(P,'gridMask',@(x) ...
     isnumeric(x) && ...
     ismatrix(x) && ...
     ~isempty(x));
 addRequired(P,'gridMaskGeoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,inputRasterData, ....
-    gridMaskGeoRasterRef);
+parse(P,nargin,nargout,inputRasterData,gridMask,gridMaskGeoRasterRef);
 
 %% Function Parameters
 
 latLim = gridMaskGeoRasterRef.Latlim;
 lonLim = gridMaskGeoRasterRef.Lonlim;
 [cmapRasterData, ~] = cmunique(inputRasterData);
+cmapRasterData(~gridMask) = nan;
 
 %% Generate Output Plot
 
 usamap(latLim,lonLim);
+hold on
 plotHandle = geoshow(cmapRasterData,gridMaskGeoRasterRef,...
     'DisplayType','texturemap');
 colorbar;
