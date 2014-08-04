@@ -23,7 +23,7 @@ p.gridDensity = 1116.99;
 
 %% Raster Mosaic Generation Parameters
 
-p.rasterNanFloor = -9999;
+p.rasterNanFloors = -9999;
 
 %% Shape Struct Attribute Field Parameters
 
