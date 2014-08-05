@@ -41,7 +41,7 @@ function [ gridMask, geoRasterRef ] = hucCode2GridMaskFnc( ...
 %                       labeled as ones and invalid pathway grid cells 
 %                       labeled as zero placeholders
 %
-%   geoRasterRef =      {q} cell orientated geo raster reference object
+%   gridMaskGeoRasterRef = {q} cell orientated geo raster reference object
 %                       providing spatial reference information for the
 %                       input gridMask data layer
 %

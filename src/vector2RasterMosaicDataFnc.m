@@ -110,6 +110,8 @@ validInd = find(validVec);
 
 for i = 1:shapeCount
     
+    disp(inputVectorMosaicData{i,2});
+    
     currentInd = validInd(i);
     outputRasterMosaicData{i,1} = vector2RasterDataFnc( ...
         inputVectorMosaicData{currentInd,1}, ...

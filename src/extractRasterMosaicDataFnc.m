@@ -118,6 +118,8 @@ rasterMosaicCell = cell(subDirCount,2);
 
 for i = 1:subDirCount
     
+    disp(subDirName{i,1});
+    
     inputRasterDir = [topLevelRasterDir,'/',subDirName{i,1}];   
     rasterMosaicList = getRasterMosaicListFnc(inputRasterDir,...
         gridMaskGeoRasterRef);

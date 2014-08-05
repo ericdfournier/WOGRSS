@@ -102,6 +102,8 @@ demGradientMosaicData(:,2) = names(:,1);
 
 for i = 1:4
     
+    disp(names{i,1});
+    
     demGradientMosaicData{i,1} = demGradientMosaicData{i,1} .* gridMask;
     
 end

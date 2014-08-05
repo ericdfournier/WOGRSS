@@ -1,4 +1,4 @@
-function [ vectorMosaicCell ] = extractVectorMosaicDataFnc( ...
+function [ vectorMosaicData ] = extractVectorMosaicDataFnc( ...
                                                 topLevelVectorDir, ...
                                                 hucCodeShapeStruct, ...
                                                 hucIndex, ...
@@ -25,7 +25,7 @@ function [ vectorMosaicCell ] = extractVectorMosaicDataFnc( ...
 %
 % SYNTAX:
 %
-%   [ vectorMosaicCell ] =  extractVectorMosaicDataFnc( ...
+%   [ vectorMosaicData ] =  extractVectorMosaicDataFnc( ...
 %                                                   topLevelVectorDir, ...
 %                                                   hucCodeShapeStruct, ...
 %                                                   hucIndex, ...
@@ -52,7 +52,7 @@ function [ vectorMosaicCell ] = extractVectorMosaicDataFnc( ...
 % 
 % OUTPUTS:
 %
-%   vectorMosaicCell =  {r x 1} cell array in which each cell element 
+%   vectorMosaicData =  {r x 1} cell array in which each cell element 
 %                       contains a vector dataset with the same spatial
 %                       reference information as that contained in the 
 %                       gridMaskGeoRasterRef but the individual component
@@ -107,20 +107,35 @@ subDirInd(1:2) = 0;
 subDirProps = topLevelDirProps(subDirInd);
 subDirCount = sum(subDirInd);
 subDirName = {subDirProps.name}';
-vectorMosaicCell = cell(subDirCount,2);
+vectorMosaicData = cell(subDirCount,2);
+boundingBox = hucCodeShapeStruct(hucIndex,1).BoundingBox;
 
 %% Iteratively Generate Vector Mosaic Data for Each Sub Directory
 
-for i = 1:subDirCount   
+for i = 1:subDirCount
+    
+    disp(subDirName{i,1});
     
     subDirString = [topLevelVectorDir,'/',subDirName{i,1}];
     inputShapefileInfo = dir([subDirString,'/*.shp']);
     inputShapefileName = inputShapefileInfo.name;
     inputShapeStruct = shaperead([subDirString,'/',inputShapefileName], ...
-        'UseGeoCoords',true);
-    vectorMosaicCell{i,1} = vectorIntersectDataFnc( inputShapeStruct, ...
-        hucCodeShapeStruct, hucIndex, gridMaskGeoRasterRef);
-    vectorMosaicCell{i,2} = subDirName{i,1};
+        'UseGeoCoords',true, ...
+        'BoundingBox',boundingBox);
+    
+    if isempty(inputShapeStruct) == 1
+        
+        vectorMosaicData{i,1} = [];
+        
+    else 
+        
+        vectorMosaicData{i,1} = vectorIntersectDataFnc( ...
+            inputShapeStruct, hucCodeShapeStruct, hucIndex, ...
+            gridMaskGeoRasterRef);
+        
+    end
+    
+    vectorMosaicData{i,2} = subDirName{i,1};
 
 end
 
