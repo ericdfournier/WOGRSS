@@ -52,13 +52,17 @@ function [ vectorMosaicData ] = extractVectorMosaicDataFnc( ...
 % 
 % OUTPUTS:
 %
-%   vectorMosaicData =  {r x 1} cell array in which each cell element 
+%   vectorMosaicData =  {r x 3} cell array in which each cell element 
 %                       contains a vector dataset with the same spatial
 %                       reference information as that contained in the 
 %                       gridMaskGeoRasterRef but the individual component
 %                       geometries have been derived as the product of the
 %                       intersection of the source vector data layers with
-%                       the basin outline geometry
+%                       the basin outline geometry. The second column
+%                       contains the name descriptor string for the
+%                       corresponding vector data element. And, the third
+%                       column contains the geometry type of the
+%                       corresponding vector data element. 
 %
 % EXAMPLES:
 %   
@@ -107,7 +111,7 @@ subDirInd(1:2) = 0;
 subDirProps = topLevelDirProps(subDirInd);
 subDirCount = sum(subDirInd);
 subDirName = {subDirProps.name}';
-vectorMosaicData = cell(subDirCount,2);
+vectorMosaicData = cell(subDirCount,3);
 boundingBox = hucCodeShapeStruct(hucIndex,1).BoundingBox;
 
 %% Iteratively Generate Vector Mosaic Data for Each Sub Directory
@@ -122,6 +126,8 @@ for i = 1:subDirCount
     inputShapeStruct = shaperead([subDirString,'/',inputShapefileName], ...
         'UseGeoCoords',true, ...
         'BoundingBox',boundingBox);
+    inputShapeStructInfo = shapeinfo( ...
+        [subDirString,'/',inputShapefileName]);
     
     if isempty(inputShapeStruct) == 1
         
@@ -136,6 +142,7 @@ for i = 1:subDirCount
     end
     
     vectorMosaicData{i,2} = subDirName{i,1};
+    vectorMosaicData{i,3} = inputShapeStructInfo.ShapeType;
 
 end
 

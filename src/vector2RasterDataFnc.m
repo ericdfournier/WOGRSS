@@ -1,5 +1,6 @@
 function [ outputRasterData ] = vector2RasterDataFnc( ...
                                                 inputShapeStruct, ...
+                                                geometryType, ...
                                                 attributeField, ...
                                                 gridMask, ...
                                                 gridMaskGeoRasterRef )
@@ -18,7 +19,9 @@ function [ outputRasterData ] = vector2RasterDataFnc( ...
 %
 % SYNTAX:
 %
-%   [ outputRasterData ] =  vector2RasterDataFnc(   inputShapeStruct, ...
+%   [ outputRasterData ] =  vector2RasterDataFnc( ...
+%                                               inputShapeStruct, ...
+%                                               geometryType, ...
 %                                               attributeField, ...
 %                                               gridMask, ...
 %                                               gridMaskGeoRasterRef )
@@ -27,6 +30,10 @@ function [ outputRasterData ] = vector2RasterDataFnc( ...
 %
 %   inputShapeStruct =  {j x 1} shapefile structure array containing the
 %                       shapefile data to be converted to raster format
+%
+%   geometryType =      {char} character string indicating the geometry
+%                       type of the inputShapeStruct. The supported
+%                       geometry types are 'Point','PolyLine', & 'Polygon' 
 %
 %   attributeField =    {char} character string corresponding to the
 %                       attribute field of the inputShapeStruct that will
@@ -69,11 +76,14 @@ function [ outputRasterData ] = vector2RasterDataFnc( ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x) ...
-    x == 4);
+    x == 5);
 addRequired(P,'nargout',@(x) ...
     x == 1);
 addRequired(P,'inputShapeStruct',@(x) ...
     isstruct(x) && ...
+    ~isempty(x));
+addRequired(P,'geometryType',@(x) ...
+    ischar(x) && ...
     ~isempty(x));
 addRequired(P,'attributeField',@(x) ...
     ischar(x) && ...
@@ -85,8 +95,8 @@ addRequired(P,'gridMask',@(x) ...
 addRequired(P,'gridMaskGeoRasterRef',@(x) ...
     isa(x,'spatialref.GeoRasterReference'));
 
-parse(P,nargin,nargout,inputShapeStruct,attributeField,gridMask, ...
-    gridMaskGeoRasterRef);
+parse(P,nargin,nargout,inputShapeStruct,attributeField,geometryType, ...
+    gridMask,gridMaskGeoRasterRef);
 
 %% Function Parameters
 
@@ -103,16 +113,59 @@ if isnumeric(attributeVec) == 0
     error('Attribute Field Must Be Numeric');
     
 end
-    
-%% Check Feature Containment
 
-for i = 1:featureCount
+%% Address Different Geometry Types Individually
+
+% Polygon: Check Feature Containment and Write Output
+
+if strcmp(geometryType,'Polygon') == 1
+
+    for i = 1:featureCount
+        
+        curPolygonLat = [inputShapeStruct(i,1).Lat]';
+        curPolygonLon = [inputShapeStruct(i,1).Lon]';
+        gridIntersect = inpolygon(gridLat,gridLon, ...
+            curPolygonLat,curPolygonLon);
+        gridIntersectMask = reshape(gridIntersect,size(gridMask));
+        outputRasterData(logical(gridIntersectMask)) = attributeVec(i,1);
+        
+    end
+
+% PolyLine: Rasterize Directly to Output
     
-    curPolyLat = [inputShapeStruct(i,1).Lat]';
-    curPolyLon = [inputShapeStruct(i,1).Lon]';
-    gridIntersect = inpolygon(gridLat,gridLon,curPolyLat,curPolyLon);
-    gridIntersectMask = reshape(gridIntersect,size(gridMask));
-    outputRasterData(logical(gridIntersectMask)) = attributeVec(i,1);
+elseif strcmp(geometryType,'PolyLine') == 1
+    
+    for i = 1:featureCount
+        
+        curPolylineLat = [inputShapeStruct(i,1).Lat]';
+        curPolylineLon = [inputShapeStruct(i,1).Lon]';
+        gridIntersect = vec2mtx(curPolylineLat,curPolylineLon, ...
+            gridMask,gridMaskGeoRasterRef);
+        anyIntersect = gridIntersect ~= 0;
+        outputRasterData(anyIntersect) = gridIntersect(anyIntersect);
+        
+    end
+    
+% Point: Rasterize Directly to Output
+    
+elseif strcmp(geometryType,'Point') == 1
+    
+    for i = 1:featureCount
+        
+        curPolylineLat = [inputShapeStruct(i,1).Lat]';
+        curPolylineLon = [inputShapeStruct(i,1).Lon]';
+        gridIntersect = vec2mtx(curPolylineLat,curPolylineLon, ...
+            gridMask,gridMaskGeoRasterRef);
+        anyIntersect = gridIntersect ~= 0;
+        outputRasterData(anyIntersect) = gridIntersect(anyIntersect);
+        
+    end
+    
+% Issue Error for Unsupported Feature Geometry Types 
+    
+else
+    
+    error('Input Feature Geometry Type Not Supported');
     
 end
 

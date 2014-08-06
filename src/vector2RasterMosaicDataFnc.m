@@ -26,11 +26,14 @@ function [ outputRasterMosaicData ] = vector2RasterMosaicDataFnc( ...
 %
 % INPUTS: 
 %
-%   inputVectorMosaicData = {j x 2} cell array where each element in the 
+%   inputVectorMosaicData = {j x 3} cell array where each element in the 
 %                       first column contains a shapefile structure array 
 %                       corresponding to the shape geometry of the 
 %                       attribute described in column two of the 
-%                       corresponding row element
+%                       corresponding row element. The third column
+%                       contains a string identifier indicating the vector
+%                       feature type of the element in the first column of
+%                       the corresponding row. 
 %
 %   attributeFieldCell = {j x 1} cell array containing character strings 
 %                       which reference the respective attribute fields 
@@ -115,6 +118,7 @@ for i = 1:shapeCount
     currentInd = validInd(i);
     outputRasterMosaicData{i,1} = vector2RasterDataFnc( ...
         inputVectorMosaicData{currentInd,1}, ...
+        inputVectorMosaicData{currentInd,3},...
         attributeFieldCell{currentInd,1}, ...
         gridMask, ...
         gridMaskGeoRasterRef );

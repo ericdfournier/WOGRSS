@@ -27,13 +27,13 @@ p.rasterNanFloors = -9999;
 
 %% Shape Struct Attribute Field Parameters
 
-p.attributeFieldCell = {'CRA_NUM'; ...  % Common Resource Areas
-                        'FIPS'; ...     % Counties
-                        'GEOL_DD1'; ... % Geology
-                        'AreaAcres';... % Hydrologic Unit Code
-                                        % Roads
-                        'GIS_Acres';... % State Parks
-                                        % Stream Delineations
-                                        % Streets
-                                        % Surface Water Impoundments
-                        'FCODE'};       % Surface Water Storage
+p.attributeFieldCell = {'CRA_NUM'; ...      % Common Resource Areas
+                        'FIPS'; ...         % Counties
+                        'GEOL_DD1'; ...     % Geology
+                        'AreaAcres';...     % Hydrologic Unit Code
+                        'ID'; ...           % Roads
+                        'GIS_Acres';...     % State Parks
+                        'REACH_CODE'; ...   % Stream Delineations
+                        'ID'; ...           % Streets
+                        'FCODE_NUM'; ...    % Surface Water Impoundments
+                        'FCODE'};           % Surface Water Storage
