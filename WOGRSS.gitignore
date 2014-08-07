@@ -1,3 +1,11 @@
 # Data Directory
 
 data/
+
+# Results Directory
+
+rslt/
+
+# Support Directory
+
+sup/

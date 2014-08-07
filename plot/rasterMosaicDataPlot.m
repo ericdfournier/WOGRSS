@@ -85,7 +85,7 @@ if mod(plotDimRaw,2) == 0
     
 else
     
-    plotDim1 = floor(plotDimRaw);
+    plotDim1 = ceil(plotDimRaw);
     plotDim2 = ceil(plotCount./plotDimRaw);
     
 end
