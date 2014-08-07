@@ -9,3 +9,7 @@ rslt/
 # Support Directory
 
 sup/
+
+# Temporary m-files
+
+*.m~
