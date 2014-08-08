@@ -4,8 +4,8 @@ p = struct;
 
 %% Spatial Data Filepaths
 
-p.hucCodeShapePath = '/Users/ericfournier/Repositories/WOGRSS/data/vector/hydrologicUnitCode/huc10.shp';
-p.overlayShapePath = '/Users/ericfournier/Repositories/WOGRSS/data/vector/counties/counties.shp';
+p.hucCodeShapePath = '/Users/ericfournier/Repositories/WOGRSS/sup/hydrologicUnitCodes/huc10.shp';
+p.overlayShapePath = '/Users/ericfournier/Repositories/WOGRSS/sup/counties/counties.shp';
 
 %% Create Spatial Data Structure Objects
 
@@ -28,10 +28,11 @@ p.rasterNanFloors = -9999;
 %% Shape Struct Attribute Field Parameters
 
 p.attributeFieldCell = {'CRA_NUM'; ...      % Common Resource Areas
-                        'FIPS'; ...         % Counties
+                        'FIPS_NUM'; ...     % Counties
                         'GEOL_DD1'; ...     % Geology
                         'AreaAcres';...     % Hydrologic Unit Code
                         'ID'; ...           % Roads
+                        'MUKEY_NUM'; ...   % Soils STATSGO
                         'GIS_Acres';...     % State Parks
                         'REACH_CODE'; ...   % Stream Delineations
                         'ID'; ...           % Streets
