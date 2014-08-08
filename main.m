@@ -38,12 +38,14 @@ rasterMosaicDataPlot( ...
 %% Demo Raster Breaks Creation on Slope Layer
 
 categorialDataFlag = 0;
-breakCount = 5;
+breakCount = 4;
 
 rasterDataBreaks = rasterDataHist2BreaksFnc( ...
     rawRasterMosaicData{5,1}, ...
     categorialDataFlag, ...
     breakCount, ...
-    gridMask );
+    p.gridMask );
+
+slopeScore = reclassifyRasterData(
     
     
