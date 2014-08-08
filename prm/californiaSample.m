@@ -30,9 +30,8 @@ p.rasterNanFloors = -9999;
 p.attributeFieldCell = {'CRA_NUM'; ...      % Common Resource Areas
                         'FIPS_NUM'; ...     % Counties
                         'GEOL_DD1'; ...     % Geology
-                        'AreaAcres';...     % Hydrologic Unit Code
                         'ID'; ...           % Roads
-                        'MUKEY_NUM'; ...   % Soils STATSGO
+                        'MUKEY_NUM'; ...    % Soils STATSGO
                         'GIS_Acres';...     % State Parks
                         'REACH_CODE'; ...   % Stream Delineations
                         'ID'; ...           % Streets
