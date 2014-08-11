@@ -82,19 +82,23 @@ histDataVec = inputRasterData(logical(gridMask));
 
 %% Generate Output Plot
 
-plotHandle = figure('position',get(0,'screensize'));
-
 switch categoricalDataFlag 
     
     case 0
         
         hist(histDataVec);
-
+        grid on;
+        axis square;
+        
     case 1
             
         ordHistData = ordinal(histDataVec);
         hist(ordHistData);
+        grid on;
+        axis square;
         
 end
+
+plotHandle = 1;
 
 end

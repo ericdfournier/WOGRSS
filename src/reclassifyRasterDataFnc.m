@@ -101,14 +101,14 @@ parse(P,nargin,nargout,inputRasterData,rasterDataBreaks,directionality, ...
 
 %% Function Parameters
 
-breakCount = numel(rasterDataBreaks);
+binCount = numel(rasterDataBreaks)+1;
 outputRasterData = zeros(size(gridMask));
 
 %% Execute Reclassification Depending Upon Directionality Switch
 
 if strcmp(directionality,'ascending') == 1;
 
-    for i = 1:breakCount
+    for i = 1:binCount
         
         if i == 1
             
@@ -116,7 +116,7 @@ if strcmp(directionality,'ascending') == 1;
                 inputRasterData <= rasterDataBreaks(i,1);
             outputRasterData(currentBreakInd) = 1;
             
-        elseif i > 1 && i < breakCount
+        elseif i > 1 && i < binCount
             
             currentBreakInd = ...
                 inputRasterData <= rasterDataBreaks(i,1) & ...
@@ -126,8 +126,8 @@ if strcmp(directionality,'ascending') == 1;
         else
             
             currentBreakInd = ...
-                inputRasterData > rasterDataBreaks(i,1);
-            outputRasterData(currentBreakInd) = breakCount+1;
+                inputRasterData > rasterDataBreaks(i-1,1);
+            outputRasterData(currentBreakInd) = binCount;
             
         end
         
@@ -137,25 +137,25 @@ if strcmp(directionality,'ascending') == 1;
     
 elseif strcmp(directionality,'descending') == 1;
     
-    for i = 1:breakCount
+    for i = 1:binCount
         
         if i == 1
             
             currentBreakInd = ...
                 inputRasterData <= rasterDataBreaks(i,1);
-            outputRasterData(currentBreakInd) = breakCount+1;
+            outputRasterData(currentBreakInd) = binCount+1;
             
-        elseif i > 1 && i < breakCount
+        elseif i > 1 && i < binCount
             
             currentBreakInd = ...
                 inputRasterData <= rasterDataBreaks(i,1) & ...
                 inputRasterData > rasterDataBreaks(i-1,1);
-            outputRasterData(currentBreakInd) = breakCount-i;
+            outputRasterData(currentBreakInd) = binCount-i;
 
         else
             
             currentBreakInd = ...
-                inputRasterData > rasterDataBreaks(i,1);
+                inputRasterData > rasterDataBreaks(i-1,1);
             outputRasterData(currentBreakInd) = 1;
             
         end

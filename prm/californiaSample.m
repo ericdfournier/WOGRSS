@@ -25,7 +25,7 @@ p.gridDensity = 1116.99;
 
 p.rasterNanFloors = -9999;
 
-%% Shape Struct Attribute Field Parameters
+%% Shape Struct Attribute Field Parameter Cell
 
 p.attributeFieldCell = {'CRA_NUM'; ...      % Common Resource Areas
                         'FIPS_NUM'; ...     % Counties
@@ -37,3 +37,4 @@ p.attributeFieldCell = {'CRA_NUM'; ...      % Common Resource Areas
                         'ID'; ...           % Streets
                         'FCODE_NUM'; ...    % Surface Water Impoundments
                         'FCODE'};           % Surface Water Storage
+                                        

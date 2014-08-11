@@ -2,7 +2,8 @@ function [ rasterDataBreaks ] = rasterDataHist2BreaksFnc( ...
                                                 inputRasterData , ...
                                                 categoricalDataFlag, ...
                                                 breakCount, ...
-                                                gridMask )
+                                                gridMask, ...
+                                                gridMaskGeoRasterRef )
 % rasterDataHist2BreaksFnc.m Function to solicit from the user a set of
 % breakpoints within a raster data histogram to be used for a subsequent
 % raster reclassification procedure. The function is generally only
@@ -26,7 +27,8 @@ function [ rasterDataBreaks ] = rasterDataHist2BreaksFnc( ...
 %                                               inputRasterData, ...
 %                                               categoricalDataFlag, ...
 %                                               breakCount, ...
-%                                               gridMask )
+%                                               gridMask, ...
+%                                               gridMaskGeoRasterRef )
 %
 % INPUTS: 
 %
@@ -46,6 +48,10 @@ function [ rasterDataBreaks ] = rasterDataHist2BreaksFnc( ...
 %                       value of 1 are contained within the basin of
 %                       interest and grid cells with a value of 0 are
 %                       outside the boundary of the basin of interest
+%
+%   gridMaskGeoRasterRef = {struct} spatial referencing object for the
+%                       gridMask reference data layer for the basin of 
+%                       interest 
 %
 % OUTPUTS:
 %
@@ -71,7 +77,7 @@ function [ rasterDataBreaks ] = rasterDataHist2BreaksFnc( ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x) ...
-    x == 4);
+    x == 5);
 addRequired(P,'nargout',@(x) ...
     x == 1);
 addRequired(P,'inputRasterData',@(x) ...
@@ -88,9 +94,16 @@ addRequired(P,'gridMask',@(x) ...
     isnumeric(x) && ...
     ismatrix(x) && ...
     ~isempty(x));
+addRequired(P,'gridMaskGeoRasterRef',@(x) ...
+    isa(x,'spatialref.GeoRasterReference'));
 
 parse(P,nargin,nargout,inputRasterData,categoricalDataFlag,breakCount, ...
-    gridMask);
+    gridMask,gridMaskGeoRasterRef);
+
+%% Function Parameters
+
+latLim = gridMaskGeoRasterRef.Latlim;
+lonLim = gridMaskGeoRasterRef.Lonlim;
 
 %% Categorical Data Warning
 
@@ -103,10 +116,22 @@ end
 
 %% Generate Figure and Solicit User Inputs
 
-fig1 = rasterDataHistPlot(inputRasterData,categoricalDataFlag,gridMask);
+fig1 = figure();
+set(fig1,'position',get(0,'ScreenSize'));
+
+subplot(1,2,1);
+usamap(latLim,lonLim);
+geoshow(inputRasterData,gridMaskGeoRasterRef, ...
+    'DisplayType','texturemap');
+colorbar;
+
+subplot(1,2,2);
+rasterDataHistPlot(inputRasterData,categoricalDataFlag,gridMask);
+
 [x, ~] = ginput(breakCount);
-rasterDataBreaks = round(x);
+
 close(fig1);
 
+rasterDataBreaks = round(x);
 
 end
