@@ -86,7 +86,7 @@ parse(P,nargin,nargout,demData,gridDensity,gridMask,gridMaskGeoRasterRef);
 %% Function Parameters
 
 demGradientMosaicData = cell(4,2);
-names = {'aspect'; 'slope'; 'gradientNorth'; 'gradientSouth'};
+names = {'aspect'; 'slope'; 'gradientNorth'; 'gradientEast'};
 latLim = gridMaskGeoRasterRef.Latlim;
 lonLim = gridMaskGeoRasterRef.Lonlim;
 referenceVec = [gridDensity max(latLim) min(lonLim)];
