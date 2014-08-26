@@ -37,5 +37,4 @@ rasterMosaicDataPlot( ...
 
 %% Load Raster Data
 
-load ./rslt/
-
+load ./rslt/hucIndex_612.mat

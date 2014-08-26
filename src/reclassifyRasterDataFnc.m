@@ -39,11 +39,11 @@ function [ outputRasterData ] = reclassifyRasterDataFnc( ...
 %                       the desired number of categories in the output
 %                       raster dataset
 %
-%   directionality =    {char} character string which can take one of two
-%                       values:
-%                           'ascending': reclassify on the breaks in
+%   directionality =    [ 0 | 1 ] binary scalar value indicating the
+%                       directionality of the reclassification scheme:
+%                           0 = 'ascending': reclassify on the breaks in
 %                           ascending order (starting at 1)
-%                           'descendig': reclassify on the breaks in
+%                           1 = 'descendig': reclassify on the breaks in
 %                           descending order (ending at 1)
 %
 %   gridMask =          [n x m] binary matrix where grid cells coded with a
@@ -89,7 +89,7 @@ addRequired(P,'rasterDataBreaks',@(x) ...
     size(x,2) == 1 && ...
     ~isempty(x));
 addRequired(P,'directionality',@(x) ...
-    ischar(x) && ...
+    isscalar(x) && ...
     ~isempty(x));
 addRequired(P,'gridMask',@(x) ...
     isnumeric(x) && ...
@@ -106,7 +106,7 @@ outputRasterData = zeros(size(gridMask));
 
 %% Execute Reclassification Depending Upon Directionality Switch
 
-if strcmp(directionality,'ascending') == 1;
+if directionality == 0;
 
     for i = 1:binCount
         
@@ -135,7 +135,7 @@ if strcmp(directionality,'ascending') == 1;
     
     outputRasterData(gridMask == 0) = 0;
     
-elseif strcmp(directionality,'descending') == 1;
+elseif directionality == 1;
     
     for i = 1:binCount
         
@@ -164,7 +164,7 @@ elseif strcmp(directionality,'descending') == 1;
     
     outputRasterData(gridMask == 0) = 0;
     
-elseif any(strcmp(directionality,{'ascending';'descending'})) == 0
+else
 
     error('Directionality Input Character String Not Recognized');
     
