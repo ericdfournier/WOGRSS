@@ -35,3 +35,7 @@ rasterMosaicDataPlot( ...
     p.gridMask, ...
     p.gridMaskGeoRasterRef );
 
+%% Load Raster Data
+
+load ./rslt/
+
