@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 08-Sep-2014 09:13:31
+% Last Modified by GUIDE v2.5 09-Sep-2014 08:35:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -174,6 +174,15 @@ handles.hucCode = str2double(tmp);
 
 guidata(hObject,handles);
 
+% Find the matching hucIndex
+
+hucField = str2double(extractfield(handles.hucCodeShapeStruct,'HUC10')');
+handles.hucIndex = find(handles.hucCode == hucField);
+
+% Update handles structure
+
+guidata(hObject,handles);
+
 % --- Executes during object creation, after setting all properties.
 function inputHUCCode_CreateFcn(hObject, ~, ~)
 
@@ -202,7 +211,15 @@ end
 
 
 % --- Executes on button press in extractGridMask.
-function extractGridMask_Callback(hObject, eventdata, handles)
+function extractGridMask_Callback(hObject, ~, handles)
+
+% Write default parameters
+
+handles.gridDensity = 1116.99;
+
+% Update handles structure
+
+guidata(hObject,handles);
 
 % Get button status
 
@@ -220,6 +237,31 @@ if extractGridMaskButtonStatus == 1
     
 end
 
+% Display Success message
+
+set(handles.textExtractGridMaskSuccess,'String','Success!');
+
 % Update handles structure
 
 guidata(hObject,handles);
+
+
+% --- Executes on button press in browseTopLevelRasterDataDirectoryPath.
+function browseTopLevelRasterDataDirectoryPath_Callback(hObject, eventdata, handles)
+% hObject    handle to browseTopLevelRasterDataDirectoryPath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in browseTopLevelVectorDataDirectoryPath.
+function browseTopLevelVectorDataDirectoryPath_Callback(hObject, eventdata, handles)
+% hObject    handle to browseTopLevelVectorDataDirectoryPath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in extractData.
+function extractData_Callback(hObject, eventdata, handles)
+% hObject    handle to extractData (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

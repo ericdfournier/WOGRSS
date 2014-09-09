@@ -89,10 +89,7 @@ end
 
 stateName = 'California';
 mapFig = figure();
-scrn = get(0,'ScreenSize');
-set(mapFig,'Position',scrn);
-usamap(stateName);
-        
+usamap(stateName); 
 geoshow(overlayShapeStruct)
 
 %% Prompt User to Select Desired Study Site
