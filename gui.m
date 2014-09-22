@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 09-Sep-2014 08:35:04
+% Last Modified by GUIDE v2.5 22-Sep-2014 10:23:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -239,29 +239,141 @@ end
 
 % Display Success message
 
-set(handles.textExtractGridMaskSuccess,'String','Success!');
+set(handles.extractGridMask,'ForegroundColor',[0 0.498 0]);
+set(handles.extractGridMask,'FontWeight','bold');
 
 % Update handles structure
 
 guidata(hObject,handles);
 
 
+%__________________________________________________________________________
+%                       SELECT INPUT DATA
+%__________________________________________________________________________
+
+
 % --- Executes on button press in browseTopLevelRasterDataDirectoryPath.
-function browseTopLevelRasterDataDirectoryPath_Callback(hObject, eventdata, handles)
-% hObject    handle to browseTopLevelRasterDataDirectoryPath (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function browseTopLevelRasterDataDirectoryPath_Callback(hObject, ~, ...
+    handles)
+
+% Get button status
+
+browseTopLevelRasterDataDirectoryButtonStatus = get(hObject,'Value');
+
+% Prompt user to select top level raster directory
+
+if browseTopLevelRasterDataDirectoryButtonStatus == 1
+
+    handles.topLevelRasterDataDirectoryPath = uigetdir('/', ...
+        'Select Top Level Raster Data Direcotory');
+    
+    guidata(hObject,handles);
+    
+    rasterTableData = topLevelDir2ListArrayFnc( ...
+        handles.topLevelRasterDataDirectoryPath);
+    sizeTableData = numel(rasterTableData);
+    emptyCellCol = cell(sizeTableData,1);
+    rasterTableData = horzcat(rasterTableData,emptyCellCol);
+    set(handles.tableRasterDataInputs,'Data',rasterTableData)
+    
+end
+
+% Update Handles Structure
+
+guidata(hObject,handles);
+
+% Set Filepath String Name
+
+set(handles.textTopLevelRasterDataDirectoryPath,'String',...
+    handles.topLevelRasterDataDirectoryPath);
+
+% Update handles structure
+
+guidata(hObject,handles);
 
 
 % --- Executes on button press in browseTopLevelVectorDataDirectoryPath.
-function browseTopLevelVectorDataDirectoryPath_Callback(hObject, eventdata, handles)
-% hObject    handle to browseTopLevelVectorDataDirectoryPath (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function browseTopLevelVectorDataDirectoryPath_Callback(hObject, ~, ...
+    handles)
+
+% Get button status
+
+browseTopLevelVectorDataDirectoryButtonStatus = get(hObject,'Value');
+
+% Prompt to select top level vector data directory
+
+if browseTopLevelVectorDataDirectoryButtonStatus == 1
+
+    handles.topLevelVectorDataDirectoryPath = uigetdir('/', ...
+        'Select Top Level Vector Data Direcotory');
+    
+    guidata(hObject,handles);
+    
+    vectorTableData = topLevelDir2ListArrayFnc( ...
+        handles.topLevelVectorDataDirectoryPath);
+    sizeTableData = numel(vectorTableData);
+    emptyCellCol = cell(sizeTableData,1);
+    emptyCellCol(:,1) = {' '};
+    vectorTableData = horzcat(vectorTableData,emptyCellCol);
+    
+    set(handles.tableVectorDataInputs,'Data',vectorTableData)
+    
+end
+
+% Update Handles Structure
+
+guidata(hObject,handles);
+
+% Set Filepath String Name
+
+set(handles.textTopLevelVectorDataDirectoryPath,'String',...
+    handles.topLevelVectorDataDirectoryPath);
+
+% Update handles structure
+
+guidata(hObject,handles);
 
 
 % --- Executes on button press in extractData.
-function extractData_Callback(hObject, eventdata, handles)
-% hObject    handle to extractData (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function extractData_Callback(hObject, ~, handles)
+
+% Get button status
+
+extractDataButtonStatus = get(hObject,'Value');
+
+% Begin raw data extraction procedure
+
+if extractDataButtonStatus == 1
+    
+    % Get raster NaN floor value array
+    
+    tmp = get(handles.tableRasterDataInputs,'Data');
+    handles.rasterNanFloors = [tmp{:,2}]';
+    
+    % Get vector data attribute field array
+    
+    tmp = get(handles.tableVectorDataInputs,'Data');
+    handles.attributeFieldCell = tmp(:,2);
+    
+    % Update handles structure
+    
+    guidata(hObject,handles);
+    
+    % Extract raw mosaic data
+
+    handles.rawRasterMosaicData = extractRawRasterMosaicDataFnc( ...
+        handles.topLevelRasterDataDirectoryPath, ...
+        handles.topLevelVectorDataDirectoryPath, ...
+        handles.rasterNanFloors, ...
+        handles.gridDensity, ...
+        handles.attributeFieldCell, ...
+        handles.hucCodeShapeStruct, ...
+        handles.hucIndex, ...
+        handles.gridMask, ...
+        handles.gridMaskGeoRasterRef );
+
+end
+
+% Update handles structure
+
+guidata(hObject,handles);

@@ -52,7 +52,9 @@ parse(P,nargin,nargout,topLevelRasterDir,topLevelVectorDir, ...
 
 %% Extract Vector Mosaic Data
 
-disp('** Extracting Vector Mosaic Data **');
+disp('** Initiated Raw Data Extraction Process **');
+
+disp('* Extracting Vector Mosaic Data *');
 
 vectorMosaicData = extractVectorMosaicDataFnc( ...
     topLevelVectorDir, ...
@@ -62,7 +64,7 @@ vectorMosaicData = extractVectorMosaicDataFnc( ...
 
 %% Rasterize Vector Mosaic Data
 
-disp('** Rasterizing Vector Mosaic Data **');
+disp('* Rasterizing Vector Mosaic Data *');
 
 vector2RasterMosaicData = vector2RasterMosaicDataFnc( ...
     vectorMosaicData, ...
@@ -72,7 +74,7 @@ vector2RasterMosaicData = vector2RasterMosaicDataFnc( ...
 
 %% Extract Raster Mosaic Data
 
-disp('** Extracting Raster Mosaic Data **');
+disp('* Extracting Raster Mosaic Data *');
 
 rasterMosaicData = extractRasterMosaicDataFnc( ...
     topLevelRasterDir, ...
@@ -82,7 +84,7 @@ rasterMosaicData = extractRasterMosaicDataFnc( ...
 
 %% Generate Derived Data Products
 
-disp('** Generating Derived Data Products **');
+disp('* Generating Derived Data Products *');
 
 rasterNames = rasterMosaicData(:,2);
 demMatch = strcmp(rasterNames,'digitalElevationModel');
@@ -104,11 +106,13 @@ end
 
 %% Concatenate to Final Output
 
-disp('** Assembling Final Raster Mosaic Data Output **');
+disp('* Assembling Final Raster Mosaic Data Output *');
 
 rawRasterMosaicData = vertcat( ...
     rasterMosaicData, ...
     gradientMosaicData, ...
     vector2RasterMosaicData );
+
+disp('** Raw Data Extraction Process Completed **');
 
 end
