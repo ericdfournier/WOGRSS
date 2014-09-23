@@ -10,10 +10,11 @@ function varargout = gui(varargin)
 %      function named CALLBACK in GUI.M with the given input arguments.
 %
 %      GUI('Property','Value',...) creates a new GUI or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before gui_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to gui_OpeningFcn via varargin.
+%      existing singleton*.  Starting from the left, property value pairs
+%      are applied to the GUI before gui_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property 
+%      application stop.  All inputs are passed to gui_OpeningFcn via 
+%      varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
@@ -22,7 +23,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 22-Sep-2014 10:23:15
+% Last Modified by GUIDE v2.5 23-Sep-2014 08:32:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -45,7 +46,7 @@ end
 
 
 % --- Executes just before gui is made visible.
-function gui_OpeningFcn(hObject, eventdata, handles, varargin)
+function gui_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -63,7 +64,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = gui_OutputFcn(hObject, eventdata, handles) 
+function varargout = gui_OutputFcn(hObject, ~, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -272,7 +273,14 @@ if browseTopLevelRasterDataDirectoryButtonStatus == 1
     rasterTableData = topLevelDir2ListArrayFnc( ...
         handles.topLevelRasterDataDirectoryPath);
     sizeTableData = numel(rasterTableData);
-    emptyCellCol = cell(sizeTableData,1);
+    emptyCellCol = cell(sizeTableData,3);
+    
+    for i = 1:sizeTableData
+        for j = 2:3
+            emptyCellCol{i,j} = false;
+        end
+    end
+    
     rasterTableData = horzcat(rasterTableData,emptyCellCol);
     set(handles.tableRasterDataInputs,'Data',rasterTableData)
     
@@ -312,8 +320,15 @@ if browseTopLevelVectorDataDirectoryButtonStatus == 1
     vectorTableData = topLevelDir2ListArrayFnc( ...
         handles.topLevelVectorDataDirectoryPath);
     sizeTableData = numel(vectorTableData);
-    emptyCellCol = cell(sizeTableData,1);
+    emptyCellCol = cell(sizeTableData,3);
     emptyCellCol(:,1) = {' '};
+    
+    for i = 1:sizeTableData
+        for j = 2:3
+            emptyCellCol{i,j} = false;
+        end
+    end
+    
     vectorTableData = horzcat(vectorTableData,emptyCellCol);
     
     set(handles.tableVectorDataInputs,'Data',vectorTableData)
@@ -373,6 +388,107 @@ if extractDataButtonStatus == 1
         handles.gridMaskGeoRasterRef );
 
 end
+
+% Display Success message
+
+set(handles.extractData,'ForegroundColor',[0 0.498 0]);
+set(handles.extractData,'FontWeight','bold');
+
+% Update handles structure
+
+guidata(hObject,handles);
+
+
+%__________________________________________________________________________
+%                       Select Output Parameters
+%__________________________________________________________________________
+
+
+% --- Executes on button press in generateOutputPlot.
+function generateOutputPlot_Callback(hObject, ~, handles)
+
+% Get button status
+
+generateOutputPlotButtonStatus = get(hObject,'Value');
+
+% Begin plot generation process
+
+if generateOutputPlotButtonStatus == 1
+    
+    % Generate plot on button push 
+    
+    rasterMosaicDataPlot( ...
+    handles.finalRasterMosaicData, ...
+    handles.gridMask, ...
+    handles.gridMaskGeoRasterRef );
+
+end
+
+% Display success message
+
+set(handles.generateOutputPlot,'ForegroundColor',[0 0.498 0]);
+set(handles.generateOutputPlot,'FontWeight','bold');
+
+% Update handles structure
+
+guidata(hObject,handles);
+
+
+% --- Executes on button press in saveParametersToFile.
+function saveParametersToFile_Callback(hObject, ~, handles)
+
+% Get button status
+
+saveParametersToFileButtonStatus = get(hObject,'Value');
+
+% Request destination file location from user
+
+if saveParametersToFileButtonStatus == 1
+    
+    % Prompt user for filepath
+    
+    outputData = handles;
+    destinDirectory = uigetdir;
+    timeStampString = datestr(now,30);
+    save([destinDirectory,'/WOGRSS_PARAMETERS_',timeStampString,'.mat'],...
+        'outputData');
+    
+end
+
+% Display success message
+
+set(handles.saveParametersToFile,'ForegroundColor',[0 0.498 0]);
+set(handles.saveParametersToFile,'FontWeight','bold');
+
+% Update handles structure
+
+guidata(hObject,handles);
+
+% --- Executes on button press in saveDataToFile.
+function saveDataToFile_Callback(hObject, ~, handles)
+
+% Get button status
+
+saveDataToFileButtonStatus = get(hObject,'Value');
+
+% Request destination file location from user
+
+if saveDataToFileButtonStatus == 1
+    
+    % Prompt user for filepath
+    
+    outputData = handles.finalRasterMosaicData;
+    destinDirectory = uigetdir;
+    timeStampString = datestr(now,30);
+    save([destinDirectory,'/WOGRSS_PARAMETERS_',timeStampString,'.mat'],...
+        'outputData');
+    
+end
+
+% Display success message
+
+set(handles.saveDataToFile,'ForegroundColor',[0 0.498 0]);
+set(handles.saveDataToFile,'FontWeight','bold');
 
 % Update handles structure
 
