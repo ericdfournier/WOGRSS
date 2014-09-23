@@ -264,25 +264,31 @@ browseTopLevelRasterDataDirectoryButtonStatus = get(hObject,'Value');
 % Prompt user to select top level raster directory
 
 if browseTopLevelRasterDataDirectoryButtonStatus == 1
+        
+    % Prompt user for top level raster directory location
 
     handles.topLevelRasterDataDirectoryPath = uigetdir('/', ...
         'Select Top Level Raster Data Direcotory');
     
     guidata(hObject,handles);
     
+    % Get initial table data and overwrite with subdirectory names
+    
+    initialRasterTableData = get(handles.tableRasterDataInputs,'Data');
+    initialRasterTableRow = initialRasterTableData(1,:);
     rasterTableData = topLevelDir2ListArrayFnc( ...
         handles.topLevelRasterDataDirectoryPath);
-    sizeTableData = numel(rasterTableData);
-    emptyCellCol = cell(sizeTableData,3);
+    rowCount = numel(rasterTableData);
+    initialRasterTableData = repmat(initialRasterTableRow,rowCount,1);
+    newRasterTableData = initialRasterTableData(1:rowCount,:);
     
-    for i = 1:sizeTableData
-        for j = 2:3
-            emptyCellCol{i,j} = false;
-        end
+    for i = 1:rowCount
+        
+        newRasterTableData{i,1} = rasterTableData{i,1};
+        
     end
     
-    rasterTableData = horzcat(rasterTableData,emptyCellCol);
-    set(handles.tableRasterDataInputs,'Data',rasterTableData)
+    set(handles.tableRasterDataInputs,'Data',newRasterTableData);
     
 end
 
@@ -311,27 +317,29 @@ browseTopLevelVectorDataDirectoryButtonStatus = get(hObject,'Value');
 % Prompt to select top level vector data directory
 
 if browseTopLevelVectorDataDirectoryButtonStatus == 1
-
+    
     handles.topLevelVectorDataDirectoryPath = uigetdir('/', ...
         'Select Top Level Vector Data Direcotory');
     
     guidata(hObject,handles);
     
+    % Get initial table data and overwrite with subdirectory names
+    
+    initialVectorTableData = get(handles.tableVectorDataInputs,'Data');
+    initialVectorTableRow = initialVectorTableData(1,:);
     vectorTableData = topLevelDir2ListArrayFnc( ...
         handles.topLevelVectorDataDirectoryPath);
-    sizeTableData = numel(vectorTableData);
-    emptyCellCol = cell(sizeTableData,3);
-    emptyCellCol(:,1) = {' '};
+    rowCount = numel(vectorTableData);
+    initialVectorTableData = repmat(initialVectorTableRow,rowCount,1);
+    newVectorTableData = initialVectorTableData(1:rowCount,:);
     
-    for i = 1:sizeTableData
-        for j = 2:3
-            emptyCellCol{i,j} = false;
-        end
+    for i = 1:rowCount
+        
+        newVectorTableData{i,1} = vectorTableData{i,1};
+        
     end
     
-    vectorTableData = horzcat(vectorTableData,emptyCellCol);
-    
-    set(handles.tableVectorDataInputs,'Data',vectorTableData)
+    set(handles.tableVectorDataInputs,'Data',newVectorTableData);
     
 end
 
@@ -386,6 +394,8 @@ if extractDataButtonStatus == 1
         handles.hucIndex, ...
         handles.gridMask, ...
         handles.gridMaskGeoRasterRef );
+    
+    % Gather raster reclassification and data type selections
 
 end
 
