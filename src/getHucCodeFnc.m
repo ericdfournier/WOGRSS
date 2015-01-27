@@ -1,4 +1,5 @@
 function [ hucCode, hucIndex ] = getHucCodeFnc( hucCodeShapeStruct, ...
+                                                hucCodeFieldName,...
                                                 overlayShapeStruct )
 % getHucCodeFnc.m Function which provides the user the capability to
 % interactively select a location for the study analysis using meaningful
@@ -19,12 +20,16 @@ function [ hucCode, hucIndex ] = getHucCodeFnc( hucCodeShapeStruct, ...
 % SYNTAX:
 %
 %   [ hucCode, hucIndex ] =  getHucCodeFnc( hucCodeShapeStruct, ...
+%                                           hucCodeFieldName, ...
 %                                           overlayShapeStruct );
 %
 % INPUTS: 
 %
 %   hucCodeShapeStruct = {g x 1} shapefile structure dataset in which each 
-%                       polygon corresponds to a delineated HUC basin. 
+%                       polygon corresponds to a delineated HUC basin.
+%
+%   hucCodeFieldName =  'String' attribute field name corresponding to the 
+%                       huc region boundary geometries desired to be used
 %
 %   overlayShapeStruct = {h x 1} shapefile structure dataset which will be 
 %                       overlaid over the spatial extent to 
@@ -62,21 +67,25 @@ function [ hucCode, hucIndex ] = getHucCodeFnc( hucCodeShapeStruct, ...
 P = inputParser;
 
 addRequired(P,'nargin',@(x)...
-    x == 2);
+    x == 3);
 addRequired(P,'nargout',@(x)...
     x == 2);
 addRequired(P,'hucCodeShapeStruct',@(x)...
     isstruct(x) &&...
     ~isempty(x));
+addRequired(P,'hucCodeFieldName',@(x)...
+    isa(x,'char') &&...
+    ~isempty(x));
 addRequired(P,'overlayShapeStruct',@(x)...
     isstruct(x) &&...
     ~isempty(x));
 
-parse(P,nargin,nargout,hucCodeShapeStruct,overlayShapeStruct);
+parse(P,nargin,nargout,hucCodeShapeStruct,hucCodeFieldName,...
+    overlayShapeStruct);
 
 %% Function Parameters 
 
-hucCodeRaw = extractfield(hucCodeShapeStruct,'HUC10')';
+hucCodeRaw = extractfield(hucCodeShapeStruct,hucCodeFieldName)';
 hucCodeList = zeros(size(hucCodeRaw));
 
 for i = 1:size(hucCodeRaw,1)
@@ -111,7 +120,7 @@ end
 
 if any(inPolyCheck) == 0
     
-    error('Invalid Selction: Out of Bounds');
+    error('Invalid Selection: Out of Bounds');
     
 end
 

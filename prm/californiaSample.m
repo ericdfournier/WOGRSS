@@ -11,6 +11,7 @@ p.overlayShapePath = '/Users/ericfournier/Repositories/WOGRSS/sup/counties/count
 
 p.hucCodeShapeStruct = shaperead(p.hucCodeShapePath,'UseGeoCoords',true);
 p.overlayShapeStruct = shaperead(p.overlayShapePath,'UseGeoCoords',true);
+p.hucCodeFieldName = 'HUC10';
 
 %% Input Raster Data File Paths
 
