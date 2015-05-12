@@ -1,7 +1,7 @@
-#WOGRSS
+#WOSS
 
-Use a multi-criteria weighted overlay analysis technique to discover suitable sites for the implementation of groundwater recharge surface spreading basins or direct subsurface injection wells. 
-For more read the documentation at: www.ericdfournier.com/WOGRSS
+A GIS data preprocessing toolset for multi-criteria weighted overlay analyses involving the discovery of suitable sites for a given landuse application. 
+For more read the documentation at: http://ericdfournier.github.io/WOSS
 
 ## INSTALLATION
 
@@ -9,20 +9,20 @@ For more read the documentation at: www.ericdfournier.com/WOGRSS
 
 ````bash
 $ cd ~
-$ git clone https://github.com/ericdfournier/WOGRSS.git
+$ git clone https://github.com/ericdfournier/WOSS.git
 ````
 
 - Download and Unpack Zipped Git Repository: cd into a working directory of choice and unzip the zipped version of the repository downloaded from the project github page via the following shell commands (on mac)
 
 ````bash
-$ mkdir ~/WOGRSS
-$ cd ~/WOGRSS
-$ unzip WOGRSS.zip
+$ mkdir ~/WOSS
+$ cd ~/WOSS
+$ unzip WOSS.zip
 ````
 
 ## DESCRIPTION
 
-(WOGRSS) Weighted Overlay model for Groundwater Recharge Site Selection
+(WOSS) Weighted Overlay Site Selection GIS Data Preprocessing Toolset
 
 ### PLATFORM
 
@@ -42,4 +42,6 @@ $ unzip WOGRSS.zip
 
 ### DETAILS
 
-- The discovery of one or more sites which are suitable for a given application can be accomplished through a cartographic modeling technique known as weighted overlay analysis. The application of this technique involves the  superposition of multiple spatially referenced data layers, each of which has been interpreted to represent some dimension of site suitability for the application in question. Specifically, the WOGRSS model uses the weighted overlay analysis technique to discover contiguous spatial regions which are suitable for the implementation of either surface spreading basins or subsurface injection wells to be used for the recharge of groundwater resources. 
+- The discovery of one or more sites which are suitable for a given application can be accomplished through a cartographic modeling technique known as weighted overlay analysis. The application of this technique involves the  superposition of multiple spatially referenced data layers, each of which has been interpreted to represent some dimension of site suitability for the application in question. The WOSS toolset provides a number of routines which enable the automated preprocessing of vector and raster GIS datasets into 
+  a consistent raster format for later use in another MATLAB based modeling 
+  workflow. 
