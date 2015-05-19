@@ -10,11 +10,10 @@ function varargout = gui(varargin)
 %      function named CALLBACK in GUI.M with the given input arguments.
 %
 %      GUI('Property','Value',...) creates a new GUI or raises the
-%      existing singleton*.  Starting from the left, property value pairs
-%      are applied to the GUI before gui_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property 
-%      application stop.  All inputs are passed to gui_OpeningFcn via 
-%      varargin.
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before gui_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to gui_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
@@ -23,9 +22,14 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 23-Sep-2014 08:32:39
+% Last Modified by GUIDE v2.5 19-May-2015 16:41:43
 
-% Begin initialization code - DO NOT EDIT
+
+%--------------------------------------------------------------------------
+%                   GUI INITIALIZATION - DO NOT EDIT
+%--------------------------------------------------------------------------
+
+
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -42,11 +46,9 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
-% End initialization code - DO NOT EDIT
-
 
 % --- Executes just before gui is made visible.
-function gui_OpeningFcn(hObject, ~, handles, varargin)
+function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -62,9 +64,8 @@ guidata(hObject, handles);
 % UIWAIT makes gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
-function varargout = gui_OutputFcn(hObject, ~, handles) 
+function varargout = gui_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -74,206 +75,193 @@ function varargout = gui_OutputFcn(hObject, ~, handles)
 varargout{1} = handles.output;
 
 
-%__________________________________________________________________________
-%                       SELECT STUDY SITE
-%__________________________________________________________________________
+%--------------------------------------------------------------------------
+%                   PART 1: GENERATE REFERENCE GRID
+%--------------------------------------------------------------------------
 
 
-% --- Executes on button press in browseHUCBasinBoundaryShapefileFilepath.
-function browseHUCBasinBoundaryShapefileFilepath_Callback(hObject, ~,...
-    handles)
+% --- Executes on button press in browseReferenceShapefilePath.
+function browseReferenceShapefilePath_Callback(hObject, eventdata, handles)
 
 % Get button status
-
-browseHUCBasinBoundaryButtonStatus = get(hObject,'Value');
+browseReferenceShapefilePath = get(hObject,'Value');
 
 % Prompt user to select boundary shapefile
-
-if browseHUCBasinBoundaryButtonStatus == 1
-
+if browseReferenceShapefilePath == 1
     [filename, pathname] = uigetfile('*.shp',...
-        'Select HUC Basin Boundary Shapefile');
-    basinBoundaryFilepath = [pathname,'/',filename];
-    handles.hucCodeShapeStruct = shaperead(basinBoundaryFilepath,...
-        'UseGeoCoords',true);
-    
+        'Edit Reference Shapefile Path');
+    referenceShapefileFilepath = [pathname,filename];
+    handles.referenceShapeStruct = shaperead(referenceShapefileFilepath,...
+        'UseGeoCoords',true);  
 end
 
-set(handles.textHUCBasinBoundaryShapefileFilepath,'String',...
-    basinBoundaryFilepath);
+% Update text string
+set(handles.editReferenceShapefilePath,'String',...
+    referenceShapefileFilepath);
 
 % Update handles structure
-
 guidata(hObject,handles);
 
+function editReferenceShapefilePath_Callback(hObject, eventdata, handles)
 
-% --- Executes on button press in browseStudySiteOverlayShapefileFilepath.
-function browseStudySiteOverlayShapefileFilepath_Callback(hObject, ~, ...
-    handles)
+% Extract user input text for filepath
+referenceShapefileFilepath = get(hObject,'String');
 
-% Get button Status
+% Update text string
+set(handles.editReferenceShapefilePath,'String',referenceShapefileFilepath);
 
-browseStudySiteButtonStatus = get(hObject,'Value');
+% Update handles structure
+guidata(hObject,handles);
 
-% Prompt user to select overlay shapefile
+% --- Executes during object creation, after setting all properties.
+function editReferenceShapefilePath_CreateFcn(hObject, eventdata, handles)
 
-if browseStudySiteButtonStatus == 1
-    
-    [filename, pathname] = uigetfile('*.shp','Select Overlay Shapefile');
-    overlayShapeFilepath = [pathname,'/',filename];
-    handles.overlayShapeStruct = shaperead(overlayShapeFilepath,...
-        'UseGeoCoords',true);
-    
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
 
-% Display filepath string
-
-set(handles.textStudySiteOverlayShapefileFilepath,'String',...
-    overlayShapeFilepath);
-
-% Update handles structure
-
-guidata(hObject,handles);
-
-
-% --- Executes on button press in selectStudySiteLocationFromMap.
-function selectStudySiteLocationFromMap_Callback(hObject, ~, handles)
+% --- Executes on button press in browseOverlayShapefilePath.
+function browseOverlayShapefilePath_Callback(hObject, eventdata, handles)
 
 % Get button status
+browseOverlayShapefilePath = get(hObject,'Value');
 
-selectStudySiteLocationButtonStatus = get(hObject,'Value');
-
-if selectStudySiteLocationButtonStatus == 1
-    
-    [handles.hucCode, handles.hucIndex ] = getHucCodeFnc( ...
-        handles.hucCodeShapeStruct, ...
-        handles.overlayShapeStruct );
-    
+% Prompt user to select boundary shapefile
+if browseOverlayShapefilePath == 1
+    [filename, pathname] = uigetfile('*.shp',...
+        'Edit Reference Shapefile Path');
+    overlayFilepath = [pathname,filename];
+    handles.overlayShapeStruct = shaperead(overlayFilepath,...
+        'UseGeoCoords',true);  
 end
 
+% Update text string
+set(handles.editOverlayShapefilePath,'String',overlayFilepath);
+
 % Update handles structure
-
 guidata(hObject,handles);
 
-% Update Huc Code and Huc Index Strings
+function editOverlayShapefilePath_Callback(hObject, eventdata, handles)
 
-set(handles.inputHUCCode,'String',num2str(handles.hucCode));
+% Extract user input text for filepath
+overlayShapefileFilepath = get(hObject,'String');
 
-% Update Handles structure
+% Update text string
+set(handles.editOverlayShapefilePath,'String',overlayShapefileFilepath);
 
+% Update handles structure
 guidata(hObject,handles);
 
+% --- Executes during object creation, after setting all properties.
+function editOverlayShapefilePath_CreateFcn(hObject, eventdata, handles)
 
-function inputHUCCode_Callback(hObject, ~, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function editReferenceShapefileAttributeField_CreateFcn(hObject, eventdata, handles)
+
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function editReferenceShapefileAttributeField_Callback(hObject, eventdata, handles)
 
 % Extract User input hucCode string
-
-tmp = get(hObject,'String');
-handles.hucCode = str2double(tmp);
+handles.referenceAttributeFieldName = get(hObject,'String');
 
 % Update handles structure
-
 guidata(hObject,handles);
 
 % Find the matching hucIndex
-
-hucField = str2double(extractfield(handles.hucCodeShapeStruct,'HUC10')');
-handles.hucIndex = find(handles.hucCode == hucField);
+handles.referenceAttributeField = extractfield(handles.referenceShapeStruct,handles.referenceAttributeFieldName);
 
 % Update handles structure
+guidata(hObject,handles);
 
+
+function editGridCellDensity_Callback(hObject, eventdata, handles)
+% hObject    handle to editGridCellDensity (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Extract user input text for filepath
+handles.gridCellDensity = str2double(get(hObject,'String'));
+
+% Update handles structure
 guidata(hObject,handles);
 
 % --- Executes during object creation, after setting all properties.
-function inputHUCCode_CreateFcn(hObject, ~, ~)
+function editGridCellDensity_CreateFcn(hObject, eventdata, handles)
 
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+if ispc && isequal(get(hObject,'BackgroundColor'), ...
+        get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 
-function inputGridDensity_Callback(hObject, ~, handles)
-
-% Get user string inputs
-
-tmp = get(hObject,'String');
-handles.gridDensity = str2double(tmp);
-
-% Update handles structure
-
-guidata(hObject,handles);
-
-% --- Executes during object creation, after setting all properties.
-function inputGridDensity_CreateFcn(hObject, ~, ~)
-
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in extractGridMask.
-function extractGridMask_Callback(hObject, ~, handles)
+% --- Executes on button press in selectReferenceBoundary.
+function selectReferenceBoundary_Callback(hObject, eventdata, handles)
 
 % Write default parameters
-
 handles.gridDensity = 1116.99;
 
 % Update handles structure
-
 guidata(hObject,handles);
 
 % Get button status
-
-extractGridMaskButtonStatus = get(hObject,'Value');
+selectReferenceBoundaryStatus = get(hObject,'Value');
 
 % Plug in parameter values and extract the grid mask
-
-if extractGridMaskButtonStatus == 1
+if selectReferenceBoundaryStatus == 1
+    
+    [handles.attributeCode, handles.attributeIndex ] = getHucCodeFnc( ...
+        handles.referenceShapeStruct, ...
+        handles.referenceAttributeFieldName, ...
+        handles.overlayShapeStruct );
     
     [handles.gridMask, ...
         handles.gridMaskGeoRasterRef ] = hucCode2GridMaskFnc( ...
-        handles.hucCodeShapeStruct, ...
-        handles.hucIndex, ...
-        handles.gridDensity );
+        handles.referenceShapeStruct, ...
+        handles.attributeIndex, ...
+        handles.gridCellDensity );
     
 end
 
 % Display Success message
-
-set(handles.extractGridMask,'ForegroundColor',[0 0.498 0]);
-set(handles.extractGridMask,'FontWeight','bold');
+set(handles.selectReferenceBoundary,'ForegroundColor',[0 0.498 0]);
 
 % Update handles structure
-
 guidata(hObject,handles);
 
 
-%__________________________________________________________________________
-%                       SELECT INPUT DATA
-%__________________________________________________________________________
+
+%--------------------------------------------------------------------------
+%                   PART 2: EXTRACT DATA
+%--------------------------------------------------------------------------
 
 
-% --- Executes on button press in browseTopLevelRasterDataDirectoryPath.
-function browseTopLevelRasterDataDirectoryPath_Callback(hObject, ~, ...
-    handles)
+
+% --- Executes on button press in browseTopLevelRasterDirectoryPath.
+function browseTopLevelRasterDirectoryPath_Callback(hObject, eventdata, handles)
 
 % Get button status
-
 browseTopLevelRasterDataDirectoryButtonStatus = get(hObject,'Value');
 
 % Prompt user to select top level raster directory
-
 if browseTopLevelRasterDataDirectoryButtonStatus == 1
         
     % Prompt user for top level raster directory location
-
     handles.topLevelRasterDataDirectoryPath = uigetdir('/', ...
         'Select Top Level Raster Data Direcotory');
-    
     guidata(hObject,handles);
     
     % Get initial table data and overwrite with subdirectory names
-    
     initialRasterTableData = get(handles.tableRasterDataInputs,'Data');
     initialRasterTableRow = initialRasterTableData(1,:);
     rasterTableData = topLevelDir2ListArrayFnc( ...
@@ -281,50 +269,74 @@ if browseTopLevelRasterDataDirectoryButtonStatus == 1
     rowCount = numel(rasterTableData);
     initialRasterTableData = repmat(initialRasterTableRow,rowCount,1);
     newRasterTableData = initialRasterTableData(1:rowCount,:);
-    
     for i = 1:rowCount
-        
         newRasterTableData{i,1} = rasterTableData{i,1};
-        
     end
-    
     set(handles.tableRasterDataInputs,'Data',newRasterTableData);
     
 end
 
 % Update Handles Structure
-
 guidata(hObject,handles);
 
 % Set Filepath String Name
-
-set(handles.textTopLevelRasterDataDirectoryPath,'String',...
+set(handles.editTopLevelRasterDirectoryFilepath,'String',...
     handles.topLevelRasterDataDirectoryPath);
 
 % Update handles structure
-
 guidata(hObject,handles);
 
 
-% --- Executes on button press in browseTopLevelVectorDataDirectoryPath.
-function browseTopLevelVectorDataDirectoryPath_Callback(hObject, ~, ...
-    handles)
 
-% Get button status
+function editTopLevelRasterDirectoryFilepath_Callback(hObject, eventdata, handles)
 
+% Extract User input hucCode string
+handles.topLevelRasterDataDirectoryPath = get(hObject,'String');
+
+% Get initial table data and overwrite with subdirectory names
+initialRasterTableData = get(handles.tableRasterDataInputs,'Data');
+initialRasterTableRow = initialRasterTableData(1,:);
+rasterTableData = topLevelDir2ListArrayFnc( ...
+    handles.topLevelRasterDataDirectoryPath);
+rowCount = numel(rasterTableData);
+initialRasterTableData = repmat(initialRasterTableRow,rowCount,1);
+newRasterTableData = initialRasterTableData(1:rowCount,:);
+for i = 1:rowCount
+    newRasterTableData{i,1} = rasterTableData{i,1};
+end
+set(handles.tableRasterDataInputs,'Data',newRasterTableData);
+
+% Update handles structure
+guidata(hObject,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function editTopLevelRasterDirectoryFilepath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editTopLevelRasterDirectoryFilepath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in browseTopLevelVectorDirectoryFilepath.
+function browseTopLevelVectorDirectoryFilepath_Callback(hObject, eventdata, handles)
+
+% Get bu
 browseTopLevelVectorDataDirectoryButtonStatus = get(hObject,'Value');
 
 % Prompt to select top level vector data directory
-
 if browseTopLevelVectorDataDirectoryButtonStatus == 1
     
     handles.topLevelVectorDataDirectoryPath = uigetdir('/', ...
         'Select Top Level Vector Data Direcotory');
-    
     guidata(hObject,handles);
     
     % Get initial table data and overwrite with subdirectory names
-    
     initialVectorTableData = get(handles.tableVectorDataInputs,'Data');
     initialVectorTableRow = initialVectorTableData(1,:);
     vectorTableData = topLevelDir2ListArrayFnc( ...
@@ -332,174 +344,82 @@ if browseTopLevelVectorDataDirectoryButtonStatus == 1
     rowCount = numel(vectorTableData);
     initialVectorTableData = repmat(initialVectorTableRow,rowCount,1);
     newVectorTableData = initialVectorTableData(1:rowCount,:);
-    
     for i = 1:rowCount
-        
         newVectorTableData{i,1} = vectorTableData{i,1};
-        
     end
-    
     set(handles.tableVectorDataInputs,'Data',newVectorTableData);
     
 end
 
 % Update Handles Structure
-
 guidata(hObject,handles);
 
 % Set Filepath String Name
-
-set(handles.textTopLevelVectorDataDirectoryPath,'String',...
+set(handles.editTopLevelVectorDirectoryFilepath,'String',...
     handles.topLevelVectorDataDirectoryPath);
 
 % Update handles structure
-
 guidata(hObject,handles);
 
 
-% --- Executes on button press in extractData.
-function extractData_Callback(hObject, ~, handles)
+function editTopLevelVectorDirectoryFilepath_Callback(hObject, eventdata, handles)
 
-% Get button status
+% Extract User input hucCode string
+handles.topLevelVectorDataDirectoryPath = get(hObject,'String');
 
-extractDataButtonStatus = get(hObject,'Value');
+% Get initial table data and overwrite with subdirectory names
+initialVectorTableData = get(handles.tableVectorDataInputs,'Data');
+initialVectorTableRow = initialVectorTableData(1,:);
+vectorTableData = topLevelDir2ListArrayFnc( ...
+    handles.topLevelVectorDataDirectoryPath);
+rowCount = numel(vectorTableData);
+initialVectorTableData = repmat(initialVectorTableRow,rowCount,1);
+newVectorTableData = initialVectorTableData(1:rowCount,:);
+for i = 1:rowCount
+    newVectorTableData{i,1} = vectorTableData{i,1};
+end
+set(handles.tableVectorDataInputs,'Data',newVectorTableData);
+    
+% Update Handles Structure
+guidata(hObject,handles);
 
-% Begin raw data extraction procedure
+% --- Executes during object creation, after setting all properties.
+function editTopLevelVectorDirectoryFilepath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editTopLevelVectorDirectoryFilepath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
-if extractDataButtonStatus == 1
-    
-    % Get raster NaN floor value array
-    
-    tmp = get(handles.tableRasterDataInputs,'Data');
-    handles.rasterNanFloors = [tmp{:,2}]';
-    
-    % Get vector data attribute field array
-    
-    tmp = get(handles.tableVectorDataInputs,'Data');
-    handles.attributeFieldCell = tmp(:,2);
-    
-    % Update handles structure
-    
-    guidata(hObject,handles);
-    
-    % Extract raw mosaic data
-
-    handles.rawRasterMosaicData = extractRawRasterMosaicDataFnc( ...
-        handles.topLevelRasterDataDirectoryPath, ...
-        handles.topLevelVectorDataDirectoryPath, ...
-        handles.rasterNanFloors, ...
-        handles.gridDensity, ...
-        handles.attributeFieldCell, ...
-        handles.hucCodeShapeStruct, ...
-        handles.hucIndex, ...
-        handles.gridMask, ...
-        handles.gridMaskGeoRasterRef );
-    
-    % Gather raster reclassification and data type selections
-
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
 
-% Display Success message
 
-set(handles.extractData,'ForegroundColor',[0 0.498 0]);
-set(handles.extractData,'FontWeight','bold');
-
-% Update handles structure
-
-guidata(hObject,handles);
+%--------------------------------------------------------------------------
+%                   PART 3: OUTPUT DATA
+%--------------------------------------------------------------------------
 
 
-%__________________________________________________________________________
-%                       Select Output Parameters
-%__________________________________________________________________________
 
 
-% --- Executes on button press in generateOutputPlot.
-function generateOutputPlot_Callback(hObject, ~, handles)
 
-% Get button status
+% --- Executes during object creation, after setting all properties.
+function figure1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
-generateOutputPlotButtonStatus = get(hObject,'Value');
-
-% Begin plot generation process
-
-if generateOutputPlotButtonStatus == 1
-    
-    % Generate plot on button push 
-    
-    rasterMosaicDataPlot( ...
-    handles.finalRasterMosaicData, ...
-    handles.gridMask, ...
-    handles.gridMaskGeoRasterRef );
-
-end
-
-% Display success message
-
-set(handles.generateOutputPlot,'ForegroundColor',[0 0.498 0]);
-set(handles.generateOutputPlot,'FontWeight','bold');
-
-% Update handles structure
-
-guidata(hObject,handles);
-
-
-% --- Executes on button press in saveParametersToFile.
-function saveParametersToFile_Callback(hObject, ~, handles)
-
-% Get button status
-
-saveParametersToFileButtonStatus = get(hObject,'Value');
-
-% Request destination file location from user
-
-if saveParametersToFileButtonStatus == 1
-    
-    % Prompt user for filepath
-    
-    outputData = handles;
-    destinDirectory = uigetdir;
-    timeStampString = datestr(now,30);
-    save([destinDirectory,'/WOGRSS_PARAMETERS_',timeStampString,'.mat'],...
-        'outputData');
-    
-end
-
-% Display success message
-
-set(handles.saveParametersToFile,'ForegroundColor',[0 0.498 0]);
-set(handles.saveParametersToFile,'FontWeight','bold');
-
-% Update handles structure
-
-guidata(hObject,handles);
 
 % --- Executes on button press in saveDataToFile.
-function saveDataToFile_Callback(hObject, ~, handles)
+function saveDataToFile_Callback(hObject, eventdata, handles)
+% hObject    handle to saveDataToFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
-% Get button status
 
-saveDataToFileButtonStatus = get(hObject,'Value');
-
-% Request destination file location from user
-
-if saveDataToFileButtonStatus == 1
-    
-    % Prompt user for filepath
-    
-    outputData = handles.finalRasterMosaicData;
-    destinDirectory = uigetdir;
-    timeStampString = datestr(now,30);
-    save([destinDirectory,'/WOGRSS_PARAMETERS_',timeStampString,'.mat'],...
-        'outputData');
-    
-end
-
-% Display success message
-
-set(handles.saveDataToFile,'ForegroundColor',[0 0.498 0]);
-set(handles.saveDataToFile,'FontWeight','bold');
-
-% Update handles structure
-
-guidata(hObject,handles);
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

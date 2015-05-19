@@ -96,14 +96,14 @@ end
 
 %% Generate User Map Interface
 
-stateName = 'California';
 mapFig = figure();
-usamap(stateName); 
+usamap(); 
 geoshow(overlayShapeStruct)
 
 %% Prompt User to Select Desired Study Site
 
 [latSelect, lonSelect] = inputm(1);
+set(mapFig,'Pointer','crosshair');
 close(mapFig);
 
 %% Determine Polygonal Intersection with Basin Code Boundaries
