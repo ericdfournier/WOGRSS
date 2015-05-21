@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 19-May-2015 16:41:43
+% Last Modified by GUIDE v2.5 21-May-2015 10:36:18
 
 
 %--------------------------------------------------------------------------
@@ -73,6 +73,14 @@ function varargout = gui_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+
+
+
+% --- Executes during object creation, after setting all properties.
+function figure1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
 
 %--------------------------------------------------------------------------
@@ -402,24 +410,102 @@ end
 
 
 
-
-
-% --- Executes during object creation, after setting all properties.
-function figure1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-
 % --- Executes on button press in saveDataToFile.
 function saveDataToFile_Callback(hObject, eventdata, handles)
-% hObject    handle to saveDataToFile (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
+% Get button status
+saveDataToFileButtonStatus = get(hObject,'Value');
+
+% Request destination file location from user
+if saveDataToFileButtonStatus == 1
+    
+    % Get raster NaN floor value array
+    
+    tmp = get(handles.tableRasterDataInputs,'Data');
+    handles.rasterNanFloors = [tmp{:,2}]';
+    
+    % Get vector data attribute field array
+    
+    tmp = get(handles.tableVectorDataInputs,'Data');
+    handles.attributeFieldCell = tmp(:,2);
+    
+    % Update handles structure
+    guidata(hObject,handles);
+    
+    % Extract raw mosaic data
+
+    handles.rawRasterMosaicData = extractRawRasterMosaicDataFnc( ...
+        handles.topLevelRasterDataDirectoryPath, ...
+        handles.topLevelVectorDataDirectoryPath, ...
+        handles.rasterNanFloors, ...
+        handles.gridDensity, ...
+        handles.attributeFieldCell, ...
+        handles.referenceShapeStruct, ...
+        handles.attributeIndex, ...
+        handles.gridMask, ...
+        handles.gridMaskGeoRasterRef );
+    
+    % Prompt user for filepath
+    outputData = handles.rawRasterMosaicData;
+    destinDirectory = uigetdir;
+    timeStampString = datestr(now,30);
+    save([destinDirectory,'/WOSS_PARAMETERS_',timeStampString,'.mat'],...
+        'outputData');
+    
+end
+
+% Display success message
+set(handles.saveDataToFile,'ForegroundColor',[0 0.498 0]);
+set(handles.saveDataToFile,'FontWeight','bold');
+
+% Update handles structure
+guidata(hObject,handles);
 
 
-% --- Executes on button press in pushbutton8.
-function pushbutton8_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton8 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+% --- Executes on button press in saveDataToWorkspace.
+function saveDataToWorkspace_Callback(hObject, eventdata, handles)
+
+% Get button status
+saveDataToWorkspaceButtonStatus = get(hObject,'Value');
+
+% Request destination file location from user
+if saveDataToWorkspaceButtonStatus == 1
+    
+    % Get raster NaN floor value array
+    
+    tmp = get(handles.tableRasterDataInputs,'Data');
+    handles.rasterNanFloors = [tmp{:,2}]';
+    
+    % Get vector data attribute field array
+    
+    tmp = get(handles.tableVectorDataInputs,'Data');
+    handles.attributeFieldCell = tmp(:,2);
+    
+    % Update handles structure
+    guidata(hObject,handles);
+    
+    % Extract raw mosaic data
+
+    handles.rawRasterMosaicData = extractRawRasterMosaicDataFnc( ...
+        handles.topLevelRasterDataDirectoryPath, ...
+        handles.topLevelVectorDataDirectoryPath, ...
+        handles.rasterNanFloors, ...
+        handles.gridDensity, ...
+        handles.attributeFieldCell, ...
+        handles.referenceShapeStruct, ...
+        handles.attributeIndex, ...
+        handles.gridMask, ...
+        handles.gridMaskGeoRasterRef );
+    
+    % Prompt user for filepath
+    outputData = handles.rawRasterMosaicData;
+    assignin('base','result',outputData);
+    
+end
+
+% Display success message
+set(handles.saveDataToWorkspace,'ForegroundColor',[0 0.498 0]);
+set(handles.saveDataToWorkspace,'FontWeight','bold');
+
+% Update handles structure
+guidata(hObject,handles);
