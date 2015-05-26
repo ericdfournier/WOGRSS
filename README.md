@@ -5,14 +5,16 @@ For more read the documentation at: http://ericdfournier.github.io/WOSS
 
 ## INSTALLATION
 
-- Clone Git Repository: cd into a working directory of choice and clone the git repository via the following shell commands (on mac)
+- Clone Git Repository:
+ at the terminal, cd into a working directory of choice and clone the git repository via the following bash shell commands (on mac)
 
 ````bash
 $ cd ~
 $ git clone https://github.com/ericdfournier/WOSS.git
 ````
 
-- Download and Unpack Zipped Git Repository: cd into a working directory of choice and unzip the zipped version of the repository downloaded from the project github page via the following shell commands (on mac)
+- Download and Unpack Zipped Git Repository: 
+ at the terminal, cd into a working directory of choice and unzip the zipped version of the repository downloaded from the project github page via the following bash shell commands (on mac)
 
 ````bash
 $ mkdir ~/WOSS
