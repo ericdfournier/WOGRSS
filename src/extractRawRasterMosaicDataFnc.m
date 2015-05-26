@@ -106,13 +106,27 @@ end
 
 %% Concatenate to Final Output
 
-disp('* Assembling Final Raster Mosaic Data Output *');
-
-rawRasterMosaicData = vertcat( ...
-    rasterMosaicData, ...
-    gradientMosaicData, ...
-    vector2RasterMosaicData );
-
-disp('** Raw Data Extraction Process Completed **');
+if any(demMatch) == 0
+    
+    disp('* Assembling Final Raster Mosaic Data Output *');
+    
+    rawRasterMosaicData = vertcat( ...
+        rasterMosaicData, ...
+        vector2RasterMosaicData );
+    
+    disp('** Raw Data Extraction Process Completed **');
+    
+else
+    
+    disp('* Assembling Final Raster Mosaic Data Output *');
+    
+    rawRasterMosaicData = vertcat( ...
+        rasterMosaicData, ...
+        gradientMosaicData, ...
+        vector2RasterMosaicData );
+    
+    disp('** Raw Data Extraction Process Completed **');
+    
+end
 
 end
